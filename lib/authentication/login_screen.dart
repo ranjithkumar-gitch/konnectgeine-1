@@ -14,10 +14,10 @@ class _LoginScreenState extends State<LoginScreen>
   // bool isEmailSelected = true;
 
   final TextEditingController _emailController = TextEditingController(
-    text: "hiranya.k@sunkpo.com",
+    text: "konnectgenie@admin.com",
   );
   final TextEditingController _passwordController = TextEditingController(
-    text: "9912667474",
+    text: "konnectgenie@2025",
   );
   final TextEditingController _otpController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
