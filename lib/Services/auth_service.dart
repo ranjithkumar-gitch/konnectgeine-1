@@ -19,13 +19,13 @@ class AuthService {
   }
 
   Future<Map<String, dynamic>> login(LoginRequestModel request) async {
-    print("🚀 Login Request: ${request.toJson()}");
+    print("Login Request: ${request.toJson()}");
     final response = await http.post(
       Uri.parse("$baseUrl/login"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(request.toJson()),
     );
-    print("📥 Login Response: ${response.body}");
+    print("Login Response: ${response.body}");
     return jsonDecode(response.body);
   }
 }

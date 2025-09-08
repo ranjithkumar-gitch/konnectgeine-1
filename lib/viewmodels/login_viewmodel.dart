@@ -1,6 +1,7 @@
 import 'package:KonnectGenie/main.dart';
 import 'package:KonnectGenie/models/loginResponseModel.dart' hide Role;
 import 'package:KonnectGenie/models/logonRequestModel.dart';
+import 'package:KonnectGenie/property%20admin/propertyAdminDashboard.dart';
 import 'package:KonnectGenie/sharedpreferences/sharedprefservices.dart';
 import 'package:flutter/material.dart';
 import 'package:KonnectGenie/Vendor/vendor_Dashboard.dart';
@@ -76,7 +77,7 @@ class LoginViewModel extends ChangeNotifier {
                   return ListTile(
                     title: Text(role.name),
                     onTap: () {
-                      Navigator.pop(dialogContext); // Close dialog
+                      Navigator.pop(dialogContext);
                       _loginWithRole(emailOrPhone, password, role);
                     },
                   );
@@ -107,23 +108,20 @@ class LoginViewModel extends ChangeNotifier {
       final loginResponse = LoginResponse.fromJson(response);
 
       if (loginResponse.success) {
-        // ✅ Save token
         if (loginResponse.token != null && loginResponse.token!.isNotEmpty) {
           await SharedPrefServices.settoken(loginResponse.token!);
-          print("✅ Token saved: ${loginResponse.token}");
+          print("Token saved: ${loginResponse.token}");
         }
 
-        print("🟢 Role received from API: ${role.name}");
+        print("Role received from API: ${role.name}");
 
         final userName = loginResponse.user?.name ?? role.name;
         ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
           SnackBar(content: Text("Login Successful as $userName")),
         );
 
-        // ✅ Normalize role name
         final roleKey = role.name.toLowerCase().replaceAll(" ", "");
 
-        // ✅ Navigate without depending on widget context
         if (roleKey == "superadmin") {
           navigatorKey.currentState?.pushReplacement(
             MaterialPageRoute(builder: (_) => const SuperAdmin()),
@@ -139,6 +137,10 @@ class LoginViewModel extends ChangeNotifier {
         } else if (roleKey == "vendor") {
           navigatorKey.currentState?.pushReplacement(
             MaterialPageRoute(builder: (_) => const VendorDashboard()),
+          );
+        } else if (roleKey == "propertyadmin") {
+          navigatorKey.currentState?.pushReplacement(
+            MaterialPageRoute(builder: (_) => const PropertyAdminDashboard()),
           );
         } else {
           ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
