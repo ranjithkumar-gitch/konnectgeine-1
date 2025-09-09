@@ -12,6 +12,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   // bool isEmailSelected = true;
+  bool _obscurePassword = true;
 
   final TextEditingController _emailController = TextEditingController(
     text: "konnectgenie@admin.com",
@@ -196,9 +197,22 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ),
         const SizedBox(height: 18),
+
+        // TextField(
+        //   controller: _passwordController,
+        //   obscureText: true,
+        //   decoration: InputDecoration(
+        //     prefixIcon: const Icon(Icons.lock, color: Color(0xFF2980B9)),
+        //     labelText: 'Password',
+        //     labelStyle: const TextStyle(color: Color(0xFF2980B9)),
+        //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+        //     filled: true,
+        //     fillColor: Colors.grey[100],
+        //   ),
+        // ),
         TextField(
           controller: _passwordController,
-          obscureText: true,
+          obscureText: _obscurePassword,
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.lock, color: Color(0xFF2980B9)),
             labelText: 'Password',
@@ -206,6 +220,17 @@ class _LoginScreenState extends State<LoginScreen>
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
             filled: true,
             fillColor: Colors.grey[100],
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                color: const Color(0xFF2980B9),
+              ),
+              onPressed: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
+            ),
           ),
         ),
       ],
