@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'request_details_page.dart'; // Import the new file for RequestDetailsPage
 
 class ManagerRequestsPage extends StatefulWidget {
-  const ManagerRequestsPage({Key? key}) : super(key: key);
+  const ManagerRequestsPage({super.key});
 
   @override
   State<ManagerRequestsPage> createState() => _ManagerRequestsPageState();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ExpandableUnitCard extends StatefulWidget {
   final Map<String, String> unit;
-  const ExpandableUnitCard({required this.unit});
+  const ExpandableUnitCard({super.key, required this.unit});
 
   @override
   State<ExpandableUnitCard> createState() => _ExpandableUnitCardState();

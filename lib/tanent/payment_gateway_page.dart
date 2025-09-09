@@ -6,11 +6,11 @@ class PaymentGatewayPage extends StatefulWidget {
   final String amount;
   final String description;
   const PaymentGatewayPage({
-    Key? key,
+    super.key,
     required this.paymentType,
     required this.amount,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
   State<PaymentGatewayPage> createState() => _PaymentGatewayPageState();

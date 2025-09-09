@@ -3,8 +3,7 @@ import './_expandable_unit_card.dart';
 
 class PropertyDetailsPage extends StatefulWidget {
   final Map<String, dynamic> property;
-  const PropertyDetailsPage({Key? key, required this.property})
-    : super(key: key);
+  const PropertyDetailsPage({super.key, required this.property});
 
   @override
   State<PropertyDetailsPage> createState() => _PropertyDetailsPageState();

@@ -4,7 +4,7 @@ import 'package:KonnectGenie/authentication/login_screen.dart';
 import 'package:KonnectGenie/manager/manager_dashboard.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();

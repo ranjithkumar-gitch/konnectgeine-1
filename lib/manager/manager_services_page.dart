@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ManagerServicesPage extends StatefulWidget {
-  const ManagerServicesPage({Key? key}) : super(key: key);
+  const ManagerServicesPage({super.key});
 
   @override
   State<ManagerServicesPage> createState() => _ManagerServicesPageState();

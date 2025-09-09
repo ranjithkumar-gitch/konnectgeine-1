@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:KonnectGenie/authentication/login_screen.dart';
 
 class SuperAdmin extends StatefulWidget {
-  const SuperAdmin({Key? key}) : super(key: key);
+  const SuperAdmin({super.key});
 
   @override
   State<SuperAdmin> createState() => _SuperAdminState();

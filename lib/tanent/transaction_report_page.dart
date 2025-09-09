@@ -7,11 +7,11 @@ class TransactionReportPage extends StatelessWidget {
   final String amount;
   final String paymentMethod;
   const TransactionReportPage({
-    Key? key,
+    super.key,
     required this.transactionId,
     required this.amount,
     required this.paymentMethod,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

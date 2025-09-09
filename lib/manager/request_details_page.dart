@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class RequestDetailsPage extends StatefulWidget {
   final Map<String, dynamic> request;
-  const RequestDetailsPage({Key? key, required this.request}) : super(key: key);
+  const RequestDetailsPage({super.key, required this.request});
 
   @override
   State<RequestDetailsPage> createState() => _RequestDetailsPageState();

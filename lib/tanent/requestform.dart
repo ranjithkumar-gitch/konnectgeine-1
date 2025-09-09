@@ -4,8 +4,7 @@ import 'dart:io';
 
 class RequestFormPage extends StatefulWidget {
   final String serviceLabel;
-  const RequestFormPage({Key? key, required this.serviceLabel})
-    : super(key: key);
+  const RequestFormPage({super.key, required this.serviceLabel});
 
   @override
   State<RequestFormPage> createState() => _RequestFormPageState();
@@ -23,7 +22,7 @@ class _RequestFormPageState extends State<RequestFormPage> {
   }
 
   Future<void> _pickAttachments() async {
-    final List<XFile>? picked = await _picker.pickMultiImage();
+    final List<XFile> picked = await _picker.pickMultiImage();
     // For video support, you can add a separate button or dialog for video picking
     if (picked != null && picked.isNotEmpty) {
       setState(() {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'property_details_page.dart';
 
 class ManagerPropertiesPage extends StatefulWidget {
-  const ManagerPropertiesPage({Key? key}) : super(key: key);
+  const ManagerPropertiesPage({super.key});
 
   @override
   State<ManagerPropertiesPage> createState() => _ManagerPropertiesPageState();

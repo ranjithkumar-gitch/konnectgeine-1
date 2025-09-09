@@ -8,7 +8,7 @@ import 'manager_requests_page.dart';
 import 'manager_services_page.dart';
 
 class ManagerDashboard extends StatefulWidget {
-  const ManagerDashboard({Key? key}) : super(key: key);
+  const ManagerDashboard({super.key});
 
   @override
   State<ManagerDashboard> createState() => _ManagerDashboardState();

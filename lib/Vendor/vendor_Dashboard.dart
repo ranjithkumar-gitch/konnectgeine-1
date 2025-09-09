@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../authentication/login_screen.dart';
 
 class VendorDashboard extends StatefulWidget {
-  const VendorDashboard({Key? key}) : super(key: key);
+  const VendorDashboard({super.key});
 
   @override
   State<VendorDashboard> createState() => _VendorDashboardState();

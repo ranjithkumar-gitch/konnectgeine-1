@@ -24,7 +24,7 @@ String formatDisplayDate(String dateStr) {
 }
 
 class MyRequestsPage extends StatefulWidget {
-  const MyRequestsPage({Key? key}) : super(key: key);
+  const MyRequestsPage({super.key});
 
   @override
   State<MyRequestsPage> createState() => _MyRequestsPageState();

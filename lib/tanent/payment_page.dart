@@ -3,7 +3,7 @@ import 'payment_gateway_page.dart';
 
 class PaymentPage extends StatefulWidget {
   final String paymentType;
-  const PaymentPage({Key? key, required this.paymentType}) : super(key: key);
+  const PaymentPage({super.key, required this.paymentType});
 
   @override
   State<PaymentPage> createState() => _PaymentPageState();
