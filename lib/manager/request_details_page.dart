@@ -46,7 +46,7 @@ class _RequestDetailsPageState extends State<RequestDetailsPage> {
         },
       ];
     }
-    // Default vendor list
+
     return [
       {
         'name': 'General Vendor',

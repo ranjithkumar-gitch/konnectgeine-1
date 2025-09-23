@@ -4,20 +4,17 @@ import 'package:json_annotation/json_annotation.dart';
 class LoginRequestModel {
   final String emailOrPhone;
   final String password;
-  final String selectedRoleId;
+  final String rememberMe;
 
   LoginRequestModel({
     required this.emailOrPhone,
     required this.password,
-    required this.selectedRoleId,
+    required this.rememberMe,
   });
 
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> map = {
-      "emailOrPhone": emailOrPhone.toString().trim(),
-      "password": password.toString().trim(),
-      "selectedRoleId": selectedRoleId.toString().trim(),
-    };
-    return map;
-  }
+  Map<String, dynamic> toJson() => {
+    "emailOrPhone": emailOrPhone.trim(),
+    "password": password.trim(),
+    "rememberMe": rememberMe.trim(),
+  };
 }

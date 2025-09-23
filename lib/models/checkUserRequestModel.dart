@@ -7,12 +7,15 @@ String checkUserRequestToJson(CheckUserRequest data) =>
     json.encode(data.toJson());
 
 class CheckUserRequest {
-  final String emailOrPhone;
+  final String roleId;
 
-  CheckUserRequest({required this.emailOrPhone});
+  CheckUserRequest({required this.roleId});
 
   factory CheckUserRequest.fromJson(Map<String, dynamic> json) =>
-      CheckUserRequest(emailOrPhone: json["emailOrPhone"] ?? '');
-
-  Map<String, dynamic> toJson() => {"emailOrPhone": emailOrPhone};
+      CheckUserRequest(roleId: json["roleId"] ?? '');
+  Map<String, dynamic> toJson() {
+    final map = {"roleId": roleId};
+    print("🔹 CheckUserRequest toJson: $map");
+    return map;
+  }
 }

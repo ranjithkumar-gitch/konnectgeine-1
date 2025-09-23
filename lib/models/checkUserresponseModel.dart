@@ -1,47 +1,60 @@
+// To parse this JSON data, do
+//
+//     final checkUserResponseModel = checkUserResponseModelFromJson(jsonString);
+
 import 'dart:convert';
 
-import 'package:KonnectGenie/models/roles.dart';
+CheckUserResponseModel checkUserResponseModelFromJson(String str) =>
+    CheckUserResponseModel.fromJson(json.decode(str));
+
+String checkUserResponseModelToJson(CheckUserResponseModel data) =>
+    json.encode(data.toJson());
 
 class CheckUserResponseModel {
-  final bool success;
-  final String loginType;
-  final bool hasMultipleRoles;
-  final List<Role> roles;
-  final String maskedInfo;
+  bool success;
+  String message;
+  SelectedRole selectedRole;
 
   CheckUserResponseModel({
     required this.success,
-    required this.loginType,
-    required this.hasMultipleRoles,
-    required this.roles,
-    required this.maskedInfo,
+    required this.message,
+    required this.selectedRole,
   });
 
-  factory CheckUserResponseModel.fromJson(Map<String, dynamic> json) {
-    return CheckUserResponseModel(
-      success: json["success"] ?? false,
-      loginType: json["loginType"] ?? "",
-      hasMultipleRoles: json["hasMultipleRoles"] ?? false,
-      roles:
-          (json["roles"] as List<dynamic>?)
-              ?.map((x) => Role.fromJson(x))
-              .toList() ??
-          [],
-      maskedInfo: json["maskedInfo"] ?? "",
-    );
-  }
+  factory CheckUserResponseModel.fromJson(Map<String, dynamic> json) =>
+      CheckUserResponseModel(
+        success: json["success"],
+        message: json["message"],
+        selectedRole: SelectedRole.fromJson(json["selectedRole"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "success": success,
-    "loginType": loginType,
-    "hasMultipleRoles": hasMultipleRoles,
-    "roles": roles.map((x) => x.toJson()).toList(),
-    "maskedInfo": maskedInfo,
+    "message": message,
+    "selectedRole": selectedRole.toJson(),
   };
 }
 
-CheckUserResponseModel checkUserResponseFromJson(String str) =>
-    CheckUserResponseModel.fromJson(json.decode(str));
+class SelectedRole {
+  String id;
+  String name;
+  String displayName;
 
-String checkUserResponseToJson(CheckUserResponseModel data) =>
-    json.encode(data.toJson());
+  SelectedRole({
+    required this.id,
+    required this.name,
+    required this.displayName,
+  });
+
+  factory SelectedRole.fromJson(Map<String, dynamic> json) => SelectedRole(
+    id: json["id"],
+    name: json["name"],
+    displayName: json["displayName"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "displayName": displayName,
+  };
+}
