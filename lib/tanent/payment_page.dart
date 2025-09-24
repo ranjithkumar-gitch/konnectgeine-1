@@ -23,7 +23,12 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Payment'), elevation: 0),
+      appBar: AppBar(
+        backgroundColor: Colors.blueGrey,
+        title: Text('Payment', style: TextStyle(color: Colors.white)),
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
@@ -117,7 +122,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade700,
+                    backgroundColor: Colors.blueGrey,
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

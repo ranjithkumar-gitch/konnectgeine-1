@@ -329,10 +329,10 @@ class _LoginScreenState extends State<LoginScreen>
   bool _obscurePassword = true;
 
   final TextEditingController _emailController = TextEditingController(
-    text: "konnectgenie@admin.com",
+    text: "ranjeeth@sunkpo.com",
   );
   final TextEditingController _passwordController = TextEditingController(
-    text: "konnectgenie@2025",
+    text: "password123",
   );
   final TextEditingController _otpController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -417,7 +417,7 @@ class _LoginScreenState extends State<LoginScreen>
                       borderRadius: BorderRadius.circular(16),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    backgroundColor: const Color(0xFF27ae60),
+                    backgroundColor: Colors.blueGrey,
                   ),
                   child:
                       vm.loading
@@ -580,7 +580,7 @@ class _LoginScreenState extends State<LoginScreen>
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFa18cd1), Color(0xFFfbc2eb)],
+            colors: [Colors.blueGrey, Color(0xFFfbc2eb)],
           ),
         ),
         child: Center(

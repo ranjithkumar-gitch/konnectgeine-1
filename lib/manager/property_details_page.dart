@@ -14,14 +14,21 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
   Widget build(BuildContext context) {
     final units = _buildUnits(widget.property);
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(widget.property['name'] ?? 'Property Details'),
+        backgroundColor: Colors.blueGrey,
+        title: Text(
+          widget.property['name'] ?? 'Property Details',
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         children: [
           Card(
-            elevation: 6,
+            color: Colors.white,
+            elevation: 2,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),

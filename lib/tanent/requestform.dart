@@ -34,7 +34,12 @@ class _RequestFormPageState extends State<RequestFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Request Form')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.blueGrey,
+        title: Text('Request Form', style: TextStyle(color: Colors.white)),
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -115,7 +120,7 @@ class _RequestFormPageState extends State<RequestFormPage> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: Colors.blueGrey,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

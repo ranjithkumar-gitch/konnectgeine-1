@@ -41,14 +41,27 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
+
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.blueGrey,
           automaticallyImplyLeading: false,
           centerTitle: true,
-          title: const Text('KonnectGenie'),
+          title: const Text(
+            'KonnectGenie',
+            style: TextStyle(color: Colors.white),
+          ),
+          leading: Builder(
+            builder:
+                (context) => IconButton(
+                  icon: Icon(Icons.menu, color: Colors.white),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                ),
+          ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.power_settings_new, color: Colors.red),
+              icon: const Icon(Icons.power_settings_new, color: Colors.white),
               tooltip: 'Logout',
               onPressed: () async {
                 final shouldLogout = await showDialog<bool>(
@@ -104,24 +117,95 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
             ),
           ],
         ),
+
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(color: Colors.blueGrey),
+                child: Text(
+                  "Property Manager",
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.dashboard),
+                title: Text("Dashboard"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.assessment),
+                title: Text("Properties"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.ad_units),
+                title: Text("Units"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.settings),
+                title: Text("Service Requests"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.person),
+                title: Text("Vendors"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.book_online),
+                title: Text("Bookings"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.payment),
+                title: Text("Payments"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ),
+
         body: _pages[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.blueGrey,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_work),
+              icon: Icon(Icons.home_work, color: Colors.white),
               label: 'Properties',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.assignment),
+              icon: Icon(Icons.assignment, color: Colors.white),
               label: 'Requests',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.miscellaneous_services),
+              icon: Icon(Icons.miscellaneous_services, color: Colors.white),
               label: 'Services',
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Colors.blue,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white,
           onTap: _onItemTapped,
         ),
       ),
@@ -133,6 +217,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
           context: context,
           builder:
               (context) => AlertDialog(
+                backgroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

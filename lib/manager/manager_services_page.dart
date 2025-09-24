@@ -481,6 +481,7 @@ class _ManagerServicesPageState extends State<ManagerServicesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Padding(
@@ -519,6 +520,7 @@ class _ManagerServicesPageState extends State<ManagerServicesPage> {
                         return StatefulBuilder(
                           builder: (context, setStateDialog) {
                             return SimpleDialog(
+                              backgroundColor: Colors.white,
                               title: const Text('Filter & Search'),
                               children: [
                                 Padding(
@@ -682,7 +684,8 @@ class _ManagerServicesPageState extends State<ManagerServicesPage> {
               itemBuilder: (context, idx) {
                 final v = _filteredVendors[idx];
                 return Card(
-                  elevation: 3,
+                  color: Colors.white,
+                  elevation: 2,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),

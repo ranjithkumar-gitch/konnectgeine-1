@@ -55,6 +55,7 @@ class _MenuPageState extends State<MenuPage>
               padding: const EdgeInsets.all(24),
               child: Center(
                 child: Card(
+                  color: Colors.white,
                   elevation: 4,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),

@@ -214,6 +214,7 @@ class _ManagerRequestsPageState extends State<ManagerRequestsPage> {
                         return StatefulBuilder(
                           builder: (context, setStateDialog) {
                             return SimpleDialog(
+                              backgroundColor: Colors.white,
                               title: const Text('Filter & Search'),
                               children: [
                                 Padding(
@@ -380,7 +381,8 @@ class _ManagerRequestsPageState extends State<ManagerRequestsPage> {
                       itemBuilder: (context, idx) {
                         final req = filteredRequests[idx];
                         return Card(
-                          elevation: 4,
+                          color: Colors.white,
+                          elevation: 2,
                           shadowColor: Colors.amber.shade100,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -583,7 +585,7 @@ class _ManagerRequestsPageState extends State<ManagerRequestsPage> {
                                               );
                                             },
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.blue,
+                                              backgroundColor: Colors.blueGrey,
                                               foregroundColor: Colors.white,
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:

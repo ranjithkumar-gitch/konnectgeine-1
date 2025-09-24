@@ -63,12 +63,21 @@ class _RequestDetailsPageState extends State<RequestDetailsPage> {
     final isNewRequest = request['status'] == 'New';
     final vendors = getVendorsForRequest(request['title'] ?? '');
     return Scaffold(
-      appBar: AppBar(title: const Text('Request Details')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          'Request Details',
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.blueGrey,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(20.0),
         children: [
           Card(
-            elevation: 3,
+            color: Colors.white,
+            elevation: 2,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -282,6 +291,7 @@ class _RequestDetailsPageState extends State<RequestDetailsPage> {
               ),
             ),
           Card(
+            color: Colors.white,
             elevation: 2,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),

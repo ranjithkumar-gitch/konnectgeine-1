@@ -494,7 +494,7 @@ class _MyRequestsPageState extends State<MyRequestsPage> {
                         itemBuilder: (context, idx) {
                           final req = _filteredRequests[idx];
                           return Card(
-                            elevation: 4,
+                            elevation: 2,
                             shadowColor: Colors.amber.shade100,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18),

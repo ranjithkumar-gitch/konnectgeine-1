@@ -153,6 +153,7 @@ class _ManagerPropertiesPageState extends State<ManagerPropertiesPage> {
                       return StatefulBuilder(
                         builder: (context, setStateDialog) {
                           return SimpleDialog(
+                            backgroundColor: Colors.white,
                             title: const Text('Filter & Search'),
                             children: [
                               Padding(
@@ -293,6 +294,7 @@ class _ManagerPropertiesPageState extends State<ManagerPropertiesPage> {
             itemBuilder: (context, index) {
               final prop = filtered[index];
               return Card(
+                color: Colors.white,
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 elevation: 2,
                 shape: RoundedRectangleBorder(

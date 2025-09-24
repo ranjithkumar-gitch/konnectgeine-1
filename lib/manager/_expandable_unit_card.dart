@@ -14,7 +14,8 @@ class _ExpandableUnitCardState extends State<ExpandableUnitCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
+      color: Colors.white,
+      elevation: 2,
       shadowColor: Colors.amber.shade100,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
