@@ -1,3 +1,7 @@
+import 'package:KonnectGenie/Vendor/vendor_Dashboard.dart';
+import 'package:KonnectGenie/manager/manager_dashboard.dart';
+import 'package:KonnectGenie/property%20admin/propertyAdminDashboard.dart';
+import 'package:KonnectGenie/tanent/dashboard_screen.dart';
 import 'package:KonnectGenie/viewmodels/login_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -329,10 +333,10 @@ class _LoginScreenState extends State<LoginScreen>
   bool _obscurePassword = true;
 
   final TextEditingController _emailController = TextEditingController(
-    text: "ranjeeth@sunkpo.com",
+    text: "lisa.montgomery@sunkpo.com",
   );
   final TextEditingController _passwordController = TextEditingController(
-    text: "password123",
+    text: "demo123",
   );
   final TextEditingController _otpController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -439,6 +443,104 @@ class _LoginScreenState extends State<LoginScreen>
                             ),
                           ),
                 ),
+              ),
+              SizedBox(height: 20),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (context) => const ManagerDashboard(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "Property Manager",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFF2980B9),
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 50),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (context) => const DashboardScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "Tenant",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFF2980B9),
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+
+                  // Row(
+                  //   children: [
+                  //     GestureDetector(
+                  //       onTap: () {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute<void>(
+                  //             builder:
+                  //                 (context) => const PropertyAdminDashboard(),
+                  //           ),
+                  //         );
+                  //       },
+                  //       child: const Text(
+                  //         "Property Admin",
+                  //         textAlign: TextAlign.center,
+                  //         style: TextStyle(
+                  //           color: Color(0xFF2980B9),
+                  //           fontWeight: FontWeight.w600,
+                  //           decoration: TextDecoration.underline,
+                  //           fontSize: 15,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     SizedBox(width: 50),
+                  //     GestureDetector(
+                  //       onTap: () {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute<void>(
+                  //             builder: (context) => const DashboardScreen(),
+                  //           ),
+                  //         );
+                  //       },
+                  //       child: const Text(
+                  //         "Tenant",
+                  //         textAlign: TextAlign.center,
+                  //         style: TextStyle(
+                  //           color: Color(0xFF2980B9),
+                  //           fontWeight: FontWeight.w600,
+                  //           decoration: TextDecoration.underline,
+                  //           fontSize: 15,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                ],
               ),
               const SizedBox(height: 18),
               GestureDetector(
@@ -589,7 +691,7 @@ class _LoginScreenState extends State<LoginScreen>
               children: [
                 Center(
                   child: Image.asset(
-                    'images/kg_logo.png',
+                    'images/kp_logo.png',
                     height: 200,
                     fit: BoxFit.contain,
                   ),

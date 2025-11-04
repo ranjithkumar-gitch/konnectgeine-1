@@ -31,16 +31,16 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('images/kg_logo.png', height: 100),
-            const SizedBox(height: 20),
-            const Text(
-              'KonnectGenie',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.orange,
-              ),
-            ),
+            Image.asset('images/kp_logo.png', height: 200),
+            const SizedBox(height: 10),
+            // const Text(
+            //   'Konnect @Property',
+            //   style: TextStyle(
+            //     fontSize: 24,
+            //     fontWeight: FontWeight.bold,
+            //     color: Colors.orange,
+            //   ),
+            // ),
           ],
         ),
       ),
