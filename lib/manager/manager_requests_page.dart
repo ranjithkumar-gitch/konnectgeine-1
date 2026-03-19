@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'request_details_page.dart'; // Import the new file for RequestDetailsPage
+
+const LinearGradient _kBrandGradient = LinearGradient(
+  colors: [Color(0xFF2C5AA0), Color(0xFF1E3A8A)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
+const Color _kBrandSecondary = Color(0xFF1E3A8A);
 
 class ManagerRequestsPage extends StatefulWidget {
   const ManagerRequestsPage({super.key});
@@ -138,25 +147,34 @@ class _ManagerRequestsPageState extends State<ManagerRequestsPage> {
       ],
     },
   ];
-  List<bool> _expanded = [];
-  List<String> _selectedStatuses = [];
+  String _selectedStatus = 'All';
   String _searchText = '';
 
-  @override
-  void initState() {
-    super.initState();
-    _expanded = List.generate(_requests.length, (_) => false);
+  Color _statusColor(String status) {
+    switch (status) {
+      case 'Completed':
+        return Colors.green;
+      case 'Pending':
+        return Colors.orange;
+      case 'In Progress':
+        return Colors.blue;
+      case 'New':
+        return Colors.deepPurple;
+      default:
+        return Colors.grey;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final statusList =
         _requests.map((e) => e['status'] as String).toSet().toList();
+    final allStatuses = <String>['All', ...statusList];
+
     final filteredRequests =
         _requests.where((e) {
           final matchesStatus =
-              _selectedStatuses.isEmpty ||
-              _selectedStatuses.contains(e['status']);
+              _selectedStatus == 'All' || _selectedStatus == e['status'];
           final search = _searchText.trim().toLowerCase();
           final matchesSearch =
               search.isEmpty ||
@@ -167,449 +185,451 @@ class _ManagerRequestsPageState extends State<ManagerRequestsPage> {
           return matchesStatus && matchesSearch;
         }).toList();
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 24, 18, 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'All Requests',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.1,
-                    color: Color(0xFF22223B),
-                  ),
-                ),
-
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade50,
-                    foregroundColor: Colors.blue.shade800,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+    return ListView(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: _kBrandGradient,
+            boxShadow: [
+              BoxShadow(
+                color: _kBrandSecondary.withOpacity(0.22),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Requests',
+                      style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                  icon: const Icon(Icons.filter_list),
-                  label: Text(
-                    _selectedStatuses.isNotEmpty || _searchText.isNotEmpty
-                        ? 'Filtered'
-                        : 'Filter',
-                  ),
-
-                  onPressed: () async {
-                    String tempSearch = _searchText;
-                    List<String> tempStatuses = List.from(_selectedStatuses);
-                    final selected = await showDialog<Map<String, dynamic>>(
-                      context: context,
-                      builder: (context) {
-                        final controller = TextEditingController(
-                          text: tempSearch,
-                        );
-                        return StatefulBuilder(
-                          builder: (context, setStateDialog) {
-                            return SimpleDialog(
-                              backgroundColor: Colors.white,
-                              title: const Text('Filter & Search'),
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  child: TextField(
-                                    controller: controller,
-                                    decoration: const InputDecoration(
-                                      labelText:
-                                          'Search by title, description, ID, or creator',
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    onChanged: (val) {
-                                      setStateDialog(() {
-                                        tempSearch = val;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children:
-                                          statusList.map((s) {
-                                            final selected = tempStatuses
-                                                .contains(s);
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 4.0,
-                                                  ),
-                                              child: ChoiceChip(
-                                                label: Text(s),
-                                                selected: selected,
-                                                selectedColor:
-                                                    Colors.blue.shade100,
-                                                onSelected: (isSelected) {
-                                                  setStateDialog(() {
-                                                    if (isSelected) {
-                                                      tempStatuses.add(s);
-                                                    } else {
-                                                      tempStatuses.remove(s);
-                                                    }
-                                                  });
-                                                },
-                                                labelStyle: TextStyle(
-                                                  color:
-                                                      selected
-                                                          ? Colors.blue.shade900
-                                                          : Colors.black87,
-                                                  fontWeight:
-                                                      selected
-                                                          ? FontWeight.bold
-                                                          : FontWeight.normal,
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red.shade400,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pop(context, {
-                                            'statuses': <String>[],
-                                            'search': '',
-                                          });
-                                        },
-                                        child: const Text('Clear Filters'),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              Colors.green.shade600,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed:
-                                            () => Navigator.pop(context, {
-                                              'statuses': tempStatuses,
-                                              'search': tempSearch,
-                                            }),
-                                        child: const Text('Apply'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    );
-                    if (selected != null) {
-                      setState(() {
-                        _selectedStatuses = List<String>.from(
-                          selected['statuses'] ?? [],
-                        );
-                        _searchText = selected['search'] ?? '';
-                      });
-                    }
-                  },
+                    const SizedBox(height: 6),
+                    Text(
+                      'Track, prioritize and resolve service requests quickly',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        height: 1.3,
+                        color: Colors.white.withOpacity(0.82),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.support_agent_rounded,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: TextField(
+            onChanged: (value) {
+              setState(() {
+                _searchText = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Search by title, description, ID, or creator',
+              hintStyle: GoogleFonts.poppins(fontSize: 13),
+              prefixIcon: const Icon(Icons.search_rounded),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
             ),
           ),
-          Expanded(
-            child:
-                filteredRequests.isEmpty
-                    ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+        ),
+        const SizedBox(height: 14),
+        Wrap(
+          spacing: 10,
+          runSpacing: 8,
+          children:
+              allStatuses
+                  .map(
+                    (status) => _FilterPill(
+                      icon:
+                          status == 'All'
+                              ? Icons.layers_rounded
+                              : Icons.flag_circle_outlined,
+                      label: status,
+                      isActive: _selectedStatus == status,
+                      onTap: () {
+                        setState(() {
+                          _selectedStatus = status;
+                        });
+                      },
+                    ),
+                  )
+                  .toList(),
+        ),
+        const SizedBox(height: 18),
+        if (filteredRequests.isEmpty)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Text(
+              'No requests match your search/filter.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: Colors.grey[700],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          )
+        else
+          ...filteredRequests.map(
+            (req) => _RequestItemCard(
+              request: req,
+              statusColor: _statusColor(req['status'] as String),
+              onView: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => RequestDetailsPage(request: req),
+                  ),
+                );
+              },
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _RequestItemCard extends StatelessWidget {
+  final Map<String, dynamic> request;
+  final Color statusColor;
+  final VoidCallback onView;
+
+  const _RequestItemCard({
+    required this.request,
+    required this.statusColor,
+    required this.onView,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final vendor = (request['vendor'] as String).trim();
+    final vendorText = vendor.isEmpty ? 'Unassigned' : vendor;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 14),
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFD9E2EC), Color(0xFFBCCCDC)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.build_circle_outlined,
+                    color: Color(0xFF243B53),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        request['title'] as String,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
                         children: [
-                          Icon(
-                            Icons.inbox,
-                            size: 64,
-                            color: Colors.grey.shade300,
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            'No requests found',
-                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          _RequestQuickTag(text: 'ID ${request['id']}'),
+                          _RequestQuickTag(
+                            text: request['createdBy'] as String,
                           ),
                         ],
                       ),
-                    )
-                    : ListView.separated(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 8,
-                      ),
-                      itemCount: filteredRequests.length,
-                      separatorBuilder:
-                          (context, index) => const SizedBox(height: 10),
-                      itemBuilder: (context, idx) {
-                        final req = filteredRequests[idx];
-                        return Card(
-                          color: Colors.white,
-                          elevation: 2,
-                          shadowColor: Colors.amber.shade100,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 4,
-                            horizontal: 0,
-                          ),
-                          child: Theme(
-                            data: Theme.of(
-                              context,
-                            ).copyWith(dividerColor: Colors.transparent),
-                            child: ExpansionTile(
-                              tilePadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 0,
-                              ),
-                              childrenPadding: EdgeInsets.zero,
-                              title: Text(
-                                req['title'],
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          req['status'] == 'Completed'
-                                              ? Colors.green.shade100
-                                              : req['status'] == 'Pending'
-                                              ? Colors.orange.shade100
-                                              : req['status'] == 'In Progress'
-                                              ? Colors.blue.shade100
-                                              : Colors.grey.shade200,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      req['status'],
-                                      style: TextStyle(
-                                        color:
-                                            req['status'] == 'Completed'
-                                                ? Colors.green.shade800
-                                                : req['status'] == 'Pending'
-                                                ? Colors.orange.shade800
-                                                : req['status'] == 'In Progress'
-                                                ? Colors.blue.shade800
-                                                : Colors.grey.shade800,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
+                    ],
+                  ),
+                ),
+                _StatusChip(
+                  label: request['status'] as String,
+                  color: statusColor,
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              request['description'] as String,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: const Color(0xFF334E68),
+                height: 1.35,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  _RequestDetailRow(
+                    icon: Icons.calendar_today_outlined,
+                    label: 'Date',
+                    value: request['date'] as String,
+                  ),
+                  _RequestDetailRow(
+                    icon: Icons.access_time_outlined,
+                    label: 'Time',
+                    value: request['time'] as String,
+                  ),
+                  _RequestDetailRow(
+                    icon: Icons.location_on_outlined,
+                    label: 'Address',
+                    value: request['address'] as String,
+                  ),
+                  _RequestDetailRow(
+                    icon: Icons.handyman_outlined,
+                    label: 'Assigned Vendor',
+                    value: vendorText,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Spacer(),
+                OutlinedButton.icon(
+                  onPressed: onView,
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.blueGrey.shade100),
+                    foregroundColor: const Color(0xFF243B53),
+                  ),
+                  icon: const Icon(Icons.visibility_outlined, size: 18),
+                  label: Text(
+                    'View Details',
+                    style: GoogleFonts.poppins(fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue.shade50,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      req['id'] ?? '',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        req['description'],
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.calendar_today,
-                                            size: 16,
-                                            color: Colors.grey.shade400,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            req['date'],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.grey.shade600,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Icon(
-                                            Icons.access_time,
-                                            size: 16,
-                                            color: Colors.grey.shade400,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            req['time'],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.grey.shade600,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'By: ${req['createdBy']}',
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black54,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.location_on,
-                                            size: 16,
-                                            color: Colors.redAccent,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Expanded(
-                                            child: Text(
-                                              req['address'],
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black87,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.handyman,
-                                            size: 16,
-                                            color: Colors.teal,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Expanded(
-                                            child: Text(
-                                              'Assigned Vendor: ${req['vendor']}',
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.teal,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        children: [
-                                          const Spacer(),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder:
-                                                      (_) => RequestDetailsPage(
-                                                        request: req,
-                                                      ),
-                                                ),
-                                              );
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.blueGrey,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 24,
-                                                    vertical: 12,
-                                                  ),
-                                            ),
-                                            child: const Text('View Details'),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+class _FilterPill extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback? onTap;
+
+  const _FilterPill({
+    required this.icon,
+    required this.label,
+    this.isActive = false,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final fgColor = isActive ? Colors.white : _kBrandSecondary;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(24),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+        decoration: BoxDecoration(
+          gradient: isActive ? _kBrandGradient : null,
+          color: isActive ? null : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isActive ? _kBrandSecondary : Colors.blueGrey.shade100,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: fgColor),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: fgColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RequestQuickTag extends StatelessWidget {
+  final String text;
+
+  const _RequestQuickTag({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF1FB),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: _kBrandSecondary.withOpacity(0.18)),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.poppins(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: _kBrandSecondary,
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _StatusChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.22)),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.poppins(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class _RequestDetailRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _RequestDetailRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 16, color: Colors.blueGrey[400]),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 96,
+            child: Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: _kBrandSecondary,
+              ),
+            ),
           ),
         ],
       ),

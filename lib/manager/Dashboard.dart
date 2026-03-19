@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pie_chart/pie_chart.dart';
+
+const LinearGradient _kBrandGradient = LinearGradient(
+  colors: [Color(0xFF2C5AA0), Color(0xFF1E3A8A)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
+const Color _kBrandSecondary = Color(0xFF1E3A8A);
 
 class DashboardPage extends StatelessWidget {
   final int properties = 128;
@@ -27,8 +36,31 @@ class DashboardPage extends StatelessWidget {
     return palette[i % palette.length];
   }
 
+  Widget _sectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            gradient: _kBrandGradient,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: Colors.white, size: 18),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          title,
+          style: GoogleFonts.poppins(fontSize: 21, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isWide = MediaQuery.of(context).size.width > 700;
+
     final dataMap = <String, double>{
       "Properties": properties.toDouble(),
       "SRs": srs.toDouble(),
@@ -50,72 +82,123 @@ class DashboardPage extends StatelessWidget {
       Color(0xFFD0021B),
     ];
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        backgroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            // Stat cards
-            GridView.count(
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              crossAxisSpacing: 14,
-              mainAxisSpacing: 12,
-              childAspectRatio: 2.6,
-              children: [
-                _StatCard(
-                  title: 'Properties',
-                  value: properties.toString(),
-                  icon: Icons.home_work,
-                  color: _colorForIndex(0),
-                ),
-                _StatCard(
-                  title: 'SRs',
-                  value: srs.toString(),
-                  icon: Icons.support_agent,
-                  color: _colorForIndex(1),
-                ),
-                _StatCard(
-                  title: 'Units',
-                  value: units.toString(),
-                  icon: Icons.apartment,
-                  color: _colorForIndex(2),
-                ),
-                _StatCard(
-                  title: 'Owners',
-                  value: owners.toString(),
-                  icon: Icons.person_outline,
-                  color: _colorForIndex(3),
+    return Container(
+      color: const Color(0xFFF5F8FF),
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(
+          16,
+          16,
+          16,
+          16 + kBottomNavigationBarHeight,
+        ),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              gradient: _kBrandGradient,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: _kBrandSecondary.withOpacity(0.24),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
                 ),
               ],
             ),
-
-            const SizedBox(height: 20),
-
-            // Overall Summary Pie Chart
-            // _PieChartCard(
-            //   title: 'Overall Distribution',
-            //   dataMap: dataMap,
-            //   colorList: colorList,
-            //   centerText: 'Summary',
-            // ),
-            const SizedBox(height: 20),
-
-            // Service Requests Pie Chart
-            _PieChartCard(
-              title: 'Service Requests Status',
-              dataMap: srData,
-              colorList: srColorList,
-              centerText: 'SRs',
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Manager Dashboard',
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Monitor properties, requests and services from one place.',
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: Colors.white.withOpacity(0.84),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.16),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.dashboard_customize,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 22),
+          _sectionHeader('Key Metrics', Icons.analytics_outlined),
+          const SizedBox(height: 12),
+          GridView.count(
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: isWide ? 4 : 2,
+            shrinkWrap: true,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: isWide ? 2.1 : 1.9,
+            children: [
+              _StatCard(
+                title: 'Properties',
+                value: properties.toString(),
+                icon: Icons.home_work,
+                color: _colorForIndex(0),
+              ),
+              _StatCard(
+                title: 'SRs',
+                value: srs.toString(),
+                icon: Icons.support_agent,
+                color: _colorForIndex(1),
+              ),
+              _StatCard(
+                title: 'Units',
+                value: units.toString(),
+                icon: Icons.apartment,
+                color: _colorForIndex(2),
+              ),
+              _StatCard(
+                title: 'Owners',
+                value: owners.toString(),
+                icon: Icons.person_outline,
+                color: _colorForIndex(3),
+              ),
+            ],
+          ),
+          const SizedBox(height: 22),
+          _sectionHeader('Performance View', Icons.pie_chart_outline_rounded),
+          const SizedBox(height: 12),
+          _PieChartCard(
+            title: 'Overall Distribution',
+            dataMap: dataMap,
+            colorList: colorList,
+            centerText: 'Summary',
+          ),
+          const SizedBox(height: 14),
+          _PieChartCard(
+            title: 'Service Requests Status',
+            dataMap: srData,
+            colorList: srColorList,
+            centerText: 'SRs',
+          ),
+        ],
       ),
     );
   }
@@ -136,20 +219,29 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14000000),
+            blurRadius: 14,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: color.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
+                color: color.withOpacity(0.14),
               ),
-              child: Icon(icon, size: 26, color: color),
+              child: Icon(icon, size: 24, color: color),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -159,20 +251,24 @@ class _StatCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(fontSize: 13, color: Colors.black54),
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: const Color(0xFF667A95),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     value,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                    style: GoogleFonts.poppins(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF102A43),
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.more_vert, color: Colors.black26),
           ],
         ),
       ),
@@ -195,42 +291,67 @@ class _PieChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 2,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x16000000),
+            blurRadius: 16,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF102A43),
+              ),
             ),
             const SizedBox(height: 16),
             PieChart(
               dataMap: dataMap,
               animationDuration: const Duration(milliseconds: 800),
-              chartLegendSpacing: 40,
-              chartRadius: MediaQuery.of(context).size.width / 2.8,
+              chartLegendSpacing: 34,
+              chartRadius: MediaQuery.of(context).size.width / 2.65,
               colorList: colorList,
               initialAngleInDegree: 0,
               chartType: ChartType.ring,
-              ringStrokeWidth: 36,
+              ringStrokeWidth: 34,
               centerText: centerText,
-              legendOptions: const LegendOptions(
+              centerTextStyle: GoogleFonts.poppins(
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+                color: _kBrandSecondary,
+              ),
+              legendOptions: LegendOptions(
                 showLegendsInRow: false,
                 legendPosition: LegendPosition.bottom,
                 showLegends: true,
-                legendTextStyle: TextStyle(
+                legendTextStyle: GoogleFonts.poppins(
                   fontWeight: FontWeight.w500,
-                  fontSize: 14,
+                  fontSize: 13,
+                  color: const Color(0xFF334E68),
                 ),
               ),
-              chartValuesOptions: const ChartValuesOptions(
+              chartValuesOptions: ChartValuesOptions(
                 showChartValues: true,
                 showChartValuesInPercentage: true,
                 showChartValuesOutside: false,
                 decimalPlaces: 1,
+                chartValueStyle: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],

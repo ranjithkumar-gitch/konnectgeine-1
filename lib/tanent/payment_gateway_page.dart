@@ -215,7 +215,10 @@ class _PaymentGatewayPageState extends State<PaymentGatewayPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Payment Gateway')),
+      appBar: AppBar(
+        title: const Text('Payment Gateway'),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(

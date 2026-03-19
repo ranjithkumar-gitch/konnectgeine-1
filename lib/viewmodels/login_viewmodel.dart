@@ -1,5 +1,5 @@
 import 'package:KonnectGenie/main.dart';
-import 'package:KonnectGenie/models/loginResponseModel.dart' hide Role;
+// import 'package:KonnectGenie/models/loginResponseModel.dart' hide Role;
 import 'package:KonnectGenie/models/logonRequestModel.dart';
 import 'package:KonnectGenie/property%20admin/propertyAdminDashboard.dart';
 import 'package:KonnectGenie/sharedpreferences/sharedprefservices.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:KonnectGenie/Vendor/vendor_Dashboard.dart';
 import 'package:KonnectGenie/manager/manager_dashboard.dart';
 import 'package:KonnectGenie/models/checkUserRequestModel.dart';
+import 'package:KonnectGenie/owner/owner_dashboard.dart';
 
 import 'package:KonnectGenie/repositories/auth_repository.dart';
 import 'package:KonnectGenie/superadmin/superAdminDashboard.dart';
@@ -67,6 +68,10 @@ class LoginViewModel extends ChangeNotifier {
           } else if (roleKey == "propertyadmin") {
             navigatorKey.currentState?.pushReplacement(
               MaterialPageRoute(builder: (_) => const PropertyAdminDashboard()),
+            );
+          } else if (roleKey == "propertyowner" || roleKey == "owner") {
+            navigatorKey.currentState?.pushReplacement(
+              MaterialPageRoute(builder: (_) => const OwnerDashboard()),
             );
           } else {
             ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(

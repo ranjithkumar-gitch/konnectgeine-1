@@ -10,6 +10,14 @@ import '../authentication/login_screen.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:kf_drawer/kf_drawer.dart';
 
+const LinearGradient _kBrandGradient = LinearGradient(
+  colors: [Color(0xFF2C5AA0), Color(0xFF1E3A8A)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
+const Color _kBrandSecondary = Color(0xFF1E3A8A);
+
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -68,7 +76,11 @@ class _DashboardScreenState extends State<DashboardScreen>
           child: Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
-              backgroundColor: Colors.blueGrey[800],
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              flexibleSpace: Container(
+                decoration: const BoxDecoration(gradient: _kBrandGradient),
+              ),
               centerTitle: true,
               automaticallyImplyLeading: false,
               title: const Text(
@@ -76,58 +88,35 @@ class _DashboardScreenState extends State<DashboardScreen>
                 style: TextStyle(color: Colors.white),
               ),
               leading: IconButton(
-                icon: const Icon(Icons.menu, color: Colors.white),
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    gradient: _kBrandGradient,
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: const Icon(Icons.menu, color: Colors.white, size: 20),
+                ),
                 onPressed: () => _drawerController.toggle!(),
               ),
               actions: [
                 IconButton(
-                  icon: const Icon(
-                    Icons.power_settings_new,
-                    color: Colors.white,
+                  icon: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      gradient: _kBrandGradient,
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: const Icon(
+                      Icons.power_settings_new,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                   tooltip: 'Logout',
                   onPressed: () async {
-                    final shouldLogout = await showDialog<bool>(
-                      context: context,
-                      builder:
-                          (context) => AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            content: Text(
-                              'Are you sure you want to logout?',
-                              style: GoogleFonts.poppins(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed:
-                                    () => Navigator.of(context).pop(false),
-                                child: Text(
-                                  'Cancel',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.blueAccent,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed:
-                                    () => Navigator.of(context).pop(true),
-                                child: Text(
-                                  'Logout',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                    );
+                    final shouldLogout = await _showLogoutDialog(context);
                     if (shouldLogout == true) {
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
@@ -149,9 +138,9 @@ class _DashboardScreenState extends State<DashboardScreen>
 
             bottomNavigationBar: AnimatedNotchBottomBar(
               notchBottomBarController: _notchController,
-              color: Colors.blueGrey[800]!,
+              color: _kBrandSecondary,
               showLabel: true,
-              notchColor: Colors.orange,
+              notchColor: const Color(0xFF2C5AA0),
               removeMargins: false,
               bottomBarWidth: 500,
               durationInMilliSeconds: 300,
@@ -205,7 +194,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       controller: _drawerController,
       header: _buildDrawerHeader(),
       footer: _buildDrawerFooter(context),
-      decoration: const BoxDecoration(color: Colors.blueGrey),
+      decoration: const BoxDecoration(gradient: _kBrandGradient),
     );
   }
 
@@ -278,38 +267,72 @@ class _DashboardScreenState extends State<DashboardScreen>
           context: context,
           builder:
               (context) => AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                title: Row(
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        gradient: _kBrandGradient,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.power_settings_new_rounded,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Logout',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: _kBrandSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 content: Text(
-                  'Are you sure want to logout?',
+                  'Are you sure you want to logout from your account?',
                   style: GoogleFonts.poppins(
-                    color: Colors.black,
-                    fontSize: 15,
+                    fontSize: 14,
+                    height: 1.35,
+                    color: const Color(0xFF334E68),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 actions: [
-                  TextButton(
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: _kBrandSecondary,
+                      side: const BorderSide(color: Color(0xFFD6E2F5)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                     onPressed: () => Navigator.of(context).pop(false),
                     child: Text(
                       'Cancel',
-                      style: GoogleFonts.poppins(
-                        color: const Color(0xFF098EDD),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                     ),
                   ),
-                  TextButton(
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _kBrandSecondary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                     onPressed: () => Navigator.of(context).pop(true),
                     child: Text(
                       'Logout',
-                      style: GoogleFonts.poppins(
-                        color: Colors.red,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                     ),
                   ),
                 ],

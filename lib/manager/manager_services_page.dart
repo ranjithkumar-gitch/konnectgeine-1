@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+const LinearGradient _kBrandGradient = LinearGradient(
+  colors: [Color(0xFF2C5AA0), Color(0xFF1E3A8A)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
+const Color _kBrandSecondary = Color(0xFF1E3A8A);
 
 class ManagerServicesPage extends StatefulWidget {
   const ManagerServicesPage({super.key});
@@ -455,15 +464,15 @@ class _ManagerServicesPageState extends State<ManagerServicesPage> {
     },
   ];
 
-  List<String> _selectedVerified = [];
+  String _selectedVerification = 'All';
   String _searchText = '';
 
   List<Map<String, dynamic>> get _filteredVendors {
     return _vendors.where((v) {
       final matchesVerified =
-          _selectedVerified.isEmpty ||
-          (_selectedVerified.contains('Verified') && v['verified'] == true) ||
-          (_selectedVerified.contains('Unverified') && v['verified'] == false);
+          _selectedVerification == 'All' ||
+          (_selectedVerification == 'Verified' && v['verified'] == true) ||
+          (_selectedVerification == 'Unverified' && v['verified'] == false);
       final search = _searchText.trim().toLowerCase();
       final matchesSearch =
           search.isEmpty ||
@@ -480,423 +489,435 @@ class _ManagerServicesPageState extends State<ManagerServicesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'List of Vendors',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade50,
-                    foregroundColor: Colors.blue.shade800,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+    return ListView(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: _kBrandGradient,
+            boxShadow: [
+              BoxShadow(
+                color: _kBrandSecondary.withOpacity(0.22),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Services',
+                      style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Manage trusted vendors and service categories',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        height: 1.3,
+                        color: Colors.white.withOpacity(0.82),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.miscellaneous_services,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: TextField(
+            onChanged: (value) {
+              setState(() {
+                _searchText = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Search by vendor name, category, ID, phone or email',
+              hintStyle: GoogleFonts.poppins(fontSize: 13),
+              prefixIcon: const Icon(Icons.search_rounded),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Wrap(
+          spacing: 10,
+          runSpacing: 8,
+          children: [
+            _FilterPill(
+              icon: Icons.layers_rounded,
+              label: 'All',
+              isActive: _selectedVerification == 'All',
+              onTap: () {
+                setState(() {
+                  _selectedVerification = 'All';
+                });
+              },
+            ),
+            _FilterPill(
+              icon: Icons.verified_rounded,
+              label: 'Verified',
+              isActive: _selectedVerification == 'Verified',
+              onTap: () {
+                setState(() {
+                  _selectedVerification = 'Verified';
+                });
+              },
+            ),
+            _FilterPill(
+              icon: Icons.gpp_bad_outlined,
+              label: 'Unverified',
+              isActive: _selectedVerification == 'Unverified',
+              onTap: () {
+                setState(() {
+                  _selectedVerification = 'Unverified';
+                });
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 18),
+        if (_filteredVendors.isEmpty)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Text(
+              'No vendors match your search/filter.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: Colors.grey[700],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          )
+        else
+          ..._filteredVendors.map((vendor) => _VendorItemCard(vendor: vendor)),
+      ],
+    );
+  }
+}
+
+class _VendorItemCard extends StatelessWidget {
+  final Map<String, dynamic> vendor;
+
+  const _VendorItemCard({required this.vendor});
+
+  @override
+  Widget build(BuildContext context) {
+    final isVerified = vendor['verified'] == true;
+    final statusColor = isVerified ? Colors.green : Colors.orange;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 14),
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child:
+                      vendor['idProof'] != null &&
+                              vendor['idProof'].toString().isNotEmpty
+                          ? Image.network(
+                            vendor['idProof'] as String,
+                            width: 48,
+                            height: 48,
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (context, error, stackTrace) => Container(
+                                  width: 48,
+                                  height: 48,
+                                  color: const Color(0xFFEAF1FB),
+                                  child: const Icon(
+                                    Icons.broken_image_outlined,
+                                    color: Color(0xFF243B53),
+                                  ),
+                                ),
+                          )
+                          : Container(
+                            width: 48,
+                            height: 48,
+                            color: const Color(0xFFEAF1FB),
+                            child: const Icon(
+                              Icons.person_outline_rounded,
+                              color: Color(0xFF243B53),
+                            ),
+                          ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        vendor['name'] as String,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          _VendorQuickTag(text: 'ID ${vendor['id']}'),
+                          _VendorQuickTag(text: vendor['category'] as String),
+                        ],
+                      ),
+                    ],
                   ),
-                  icon: const Icon(Icons.filter_list),
-                  label: Text(
-                    _selectedVerified.isNotEmpty || _searchText.isNotEmpty
-                        ? 'Filtered'
-                        : 'Filter',
-                  ),
-                  onPressed: () async {
-                    String tempSearch = _searchText;
-                    List<String> tempVerified = List.from(_selectedVerified);
-                    final selected = await showDialog<Map<String, dynamic>>(
-                      context: context,
-                      builder: (context) {
-                        final controller = TextEditingController(
-                          text: tempSearch,
-                        );
-                        return StatefulBuilder(
-                          builder: (context, setStateDialog) {
-                            return SimpleDialog(
-                              backgroundColor: Colors.white,
-                              title: const Text('Filter & Search'),
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  child: TextField(
-                                    controller: controller,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Search by any field',
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    onChanged: (val) {
-                                      setStateDialog(() {
-                                        tempSearch = val;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      ChoiceChip(
-                                        label: const Text('Verified'),
-                                        selected: tempVerified.contains(
-                                          'Verified',
-                                        ),
-                                        selectedColor: Colors.green.shade100,
-                                        onSelected: (isSelected) {
-                                          setStateDialog(() {
-                                            if (isSelected) {
-                                              tempVerified.add('Verified');
-                                            } else {
-                                              tempVerified.remove('Verified');
-                                            }
-                                          });
-                                        },
-                                        labelStyle: TextStyle(
-                                          color:
-                                              tempVerified.contains('Verified')
-                                                  ? Colors.green.shade900
-                                                  : Colors.black87,
-                                          fontWeight:
-                                              tempVerified.contains('Verified')
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      ChoiceChip(
-                                        label: const Text('Unverified'),
-                                        selected: tempVerified.contains(
-                                          'Unverified',
-                                        ),
-                                        selectedColor: Colors.red.shade100,
-                                        onSelected: (isSelected) {
-                                          setStateDialog(() {
-                                            if (isSelected) {
-                                              tempVerified.add('Unverified');
-                                            } else {
-                                              tempVerified.remove('Unverified');
-                                            }
-                                          });
-                                        },
-                                        labelStyle: TextStyle(
-                                          color:
-                                              tempVerified.contains(
-                                                    'Unverified',
-                                                  )
-                                                  ? Colors.red.shade900
-                                                  : Colors.black87,
-                                          fontWeight:
-                                              tempVerified.contains(
-                                                    'Unverified',
-                                                  )
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red.shade400,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pop(context, {
-                                            'verified': <String>[],
-                                            'search': '',
-                                          });
-                                        },
-                                        child: const Text('Clear Filters'),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              Colors.green.shade600,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed:
-                                            () => Navigator.pop(context, {
-                                              'verified': tempVerified,
-                                              'search': tempSearch,
-                                            }),
-                                        child: const Text('Apply'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    );
-                    if (selected != null) {
-                      setState(() {
-                        _selectedVerified = List<String>.from(
-                          selected['verified'] ?? [],
-                        );
-                        _searchText = selected['search'] ?? '';
-                      });
-                    }
-                  },
+                ),
+                _StatusChip(
+                  label: isVerified ? 'Verified' : 'Unverified',
+                  color: statusColor,
                 ),
               ],
             ),
+            const SizedBox(height: 10),
+            Text(
+              vendor['company'] as String,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: const Color(0xFF334E68),
+                height: 1.35,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  _VendorDetailRow(
+                    icon: Icons.phone_outlined,
+                    label: 'Phone',
+                    value: vendor['phone'] as String,
+                  ),
+                  _VendorDetailRow(
+                    icon: Icons.email_outlined,
+                    label: 'Email',
+                    value: vendor['email'] as String,
+                  ),
+                  _VendorDetailRow(
+                    icon: Icons.location_on_outlined,
+                    label: 'Address',
+                    value: vendor['companyAddress'] as String,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FilterPill extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback? onTap;
+
+  const _FilterPill({
+    required this.icon,
+    required this.label,
+    this.isActive = false,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final fgColor = isActive ? Colors.white : _kBrandSecondary;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(24),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+        decoration: BoxDecoration(
+          gradient: isActive ? _kBrandGradient : null,
+          color: isActive ? null : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isActive ? _kBrandSecondary : Colors.blueGrey.shade100,
           ),
-          const SizedBox(height: 10),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: fgColor),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: fgColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _VendorQuickTag extends StatelessWidget {
+  final String text;
+
+  const _VendorQuickTag({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF1FB),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: _kBrandSecondary.withOpacity(0.18)),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.poppins(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: _kBrandSecondary,
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _StatusChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.22)),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.poppins(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class _VendorDetailRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _VendorDetailRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 16, color: Colors.blueGrey[400]),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 74,
+            child: Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: _filteredVendors.length,
-              separatorBuilder: (context, idx) => const SizedBox(height: 12),
-              itemBuilder: (context, idx) {
-                final v = _filteredVendors[idx];
-                return Card(
-                  color: Colors.white,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Theme(
-                    data: Theme.of(
-                      context,
-                    ).copyWith(dividerColor: Colors.transparent),
-                    child: ExpansionTile(
-                      tilePadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 0,
-                      ),
-                      childrenPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child:
-                            v['idProof'] != null &&
-                                    v['idProof'].toString().isNotEmpty
-                                ? Image.network(
-                                  v['idProof'],
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                  errorBuilder:
-                                      (context, error, stackTrace) => Container(
-                                        width: 50,
-                                        height: 50,
-                                        color: Colors.grey.shade200,
-                                        child: const Icon(
-                                          Icons.broken_image,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                )
-                                : Container(
-                                  width: 50,
-                                  height: 50,
-                                  color: Colors.grey.shade100,
-                                  child: const Icon(
-                                    Icons.image_not_supported,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                      ),
-                      title: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              v['name'],
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          if (v['verified'] == true)
-                            Icon(
-                              Icons.verified,
-                              color: Colors.green.shade600,
-                              size: 20,
-                            )
-                          else
-                            Icon(
-                              Icons.verified_outlined,
-                              color: Colors.grey.shade400,
-                              size: 20,
-                            ),
-                        ],
-                      ),
-                      subtitle: Text(
-                        v['company'],
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.blueGrey,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.badge,
-                              size: 18,
-                              color: Colors.blueGrey,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Vendor ID: ${v['id']}',
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.blueGrey,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.category,
-                              size: 18,
-                              color: Colors.amber,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Category: ${v['category']}',
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.phone,
-                              size: 18,
-                              color: Colors.green,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Phone: ${v['phone']}',
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.email,
-                              size: 18,
-                              color: Colors.deepPurple,
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                'Email: ${v['email']}',
-                                style: const TextStyle(fontSize: 15),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(
-                              Icons.location_on,
-                              size: 18,
-                              color: Colors.redAccent,
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                'Company Address: ${v['companyAddress']}',
-                                style: const TextStyle(fontSize: 15),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        if (v['idProof'] != null &&
-                            v['idProof'].toString().isNotEmpty)
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.image,
-                                size: 18,
-                                color: Colors.blueGrey,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                'ID Proof:',
-                                style: const TextStyle(fontSize: 15),
-                              ),
-                              const SizedBox(width: 8),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.network(
-                                  v['idProof'],
-                                  width: 40,
-                                  height: 40,
-                                  fit: BoxFit.cover,
-                                  errorBuilder:
-                                      (context, error, stackTrace) => Container(
-                                        width: 40,
-                                        height: 40,
-                                        color: Colors.grey.shade200,
-                                        child: const Icon(
-                                          Icons.broken_image,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                ),
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: _kBrandSecondary,
+              ),
             ),
           ),
         ],

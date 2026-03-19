@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+const LinearGradient _kBrandGradient = LinearGradient(
+  colors: [Color(0xFF2C5AA0), Color(0xFF1E3A8A)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
+const Color _kBrandSecondary = Color(0xFF1E3A8A);
 
 class RequestDetailsPage extends StatefulWidget {
   final Map<String, dynamic> request;
@@ -11,6 +20,21 @@ class RequestDetailsPage extends StatefulWidget {
 class _RequestDetailsPageState extends State<RequestDetailsPage> {
   bool showVendorDropdown = false;
   String? selectedVendor;
+
+  Color _statusColor(String status) {
+    switch (status) {
+      case 'Completed':
+        return Colors.green;
+      case 'Pending':
+        return Colors.orange;
+      case 'In Progress':
+        return Colors.blue;
+      case 'New':
+        return Colors.deepPurple;
+      default:
+        return Colors.grey;
+    }
+  }
 
   // Example vendor lists by request type/title
   List<Map<String, String>> getVendorsForRequest(String title) {
@@ -62,202 +86,224 @@ class _RequestDetailsPageState extends State<RequestDetailsPage> {
     final request = widget.request;
     final isNewRequest = request['status'] == 'New';
     final vendors = getVendorsForRequest(request['title'] ?? '');
+    final attachments =
+        request['attachments'] is List
+            ? request['attachments'] as List
+            : <dynamic>[];
+    final status = request['status']?.toString() ?? 'Unknown';
+    final statusColor = _statusColor(status);
+    final vendorName = request['vendor']?.toString() ?? '';
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF5F8FF),
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Request Details',
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.poppins(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.blueGrey,
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: _kBrandGradient),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20.0),
         children: [
-          Card(
-            color: Colors.white,
-            elevation: 2,
-            shape: RoundedRectangleBorder(
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: _kBrandGradient,
+              boxShadow: [
+                BoxShadow(
+                  color: _kBrandSecondary.withOpacity(0.22),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        request['title']?.toString() ?? 'Service Request',
+                        style: GoogleFonts.poppins(
+                          fontSize: 22,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Track request lifecycle and assign vendors instantly',
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          height: 1.3,
+                          color: Colors.white.withOpacity(0.82),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.build_circle_outlined,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 14,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.confirmation_number,
-                            color: Colors.blue.shade700,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            'ID: ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.blue.shade700,
-                            ),
-                          ),
-                          Text(
-                            request['id'],
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(left: 6),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color:
-                              request['status'] == 'Completed'
-                                  ? Colors.green.shade100
-                                  : request['status'] == 'Pending'
-                                  ? Colors.orange.shade100
-                                  : request['status'] == 'In Progress'
-                                  ? Colors.blue.shade100
-                                  : request['status'] == 'New'
-                                  ? Colors.grey.shade300
-                                  : Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          request['status'],
-                          style: TextStyle(
-                            color:
-                                request['status'] == 'Completed'
-                                    ? Colors.green.shade800
-                                    : request['status'] == 'Pending'
-                                    ? Colors.orange.shade800
-                                    : request['status'] == 'In Progress'
-                                    ? Colors.blue.shade800
-                                    : request['status'] == 'New'
-                                    ? Colors.grey.shade800
-                                    : Colors.grey.shade800,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Icon(Icons.title, color: Colors.amber.shade700),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          request['title'],
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.description, color: Colors.grey.shade700),
-                      const SizedBox(width: 10),
                       Expanded(
-                        child: Text(
-                          request['description'],
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.black87,
-                          ),
+                        child: Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: [
+                            _QuickTag(text: 'ID ${request['id']}'),
+                            _QuickTag(
+                              text: request['createdBy']?.toString() ?? 'User',
+                            ),
+                          ],
                         ),
                       ),
+                      _StatusChip(label: status, color: statusColor),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_today, color: Colors.teal.shade700),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Requested On: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.teal.shade700,
-                        ),
-                      ),
-                      Text(
-                        request['date'],
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        request['time'],
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ],
+                  const SizedBox(height: 12),
+                  Text(
+                    request['title']?.toString() ?? '-',
+                    style: GoogleFonts.poppins(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF102A43),
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Icon(Icons.person, color: Colors.deepOrange.shade700),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Requested By: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.deepOrange.shade700,
-                        ),
-                      ),
-                      Text(
-                        request['createdBy'],
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
+                  const SizedBox(height: 8),
+                  Text(
+                    request['description']?.toString() ?? '-',
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      color: const Color(0xFF334E68),
+                      height: 1.35,
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.location_on, color: Colors.redAccent),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          request['address'],
-                          style: const TextStyle(fontSize: 16),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        _DetailRow(
+                          icon: Icons.calendar_today_outlined,
+                          label: 'Date',
+                          value: request['date']?.toString() ?? '-',
                         ),
-                      ),
-                    ],
+                        _DetailRow(
+                          icon: Icons.access_time_outlined,
+                          label: 'Time',
+                          value: request['time']?.toString() ?? '-',
+                        ),
+                        _DetailRow(
+                          icon: Icons.person_outline,
+                          label: 'Requested By',
+                          value: request['createdBy']?.toString() ?? '-',
+                        ),
+                        _DetailRow(
+                          icon: Icons.location_on_outlined,
+                          label: 'Address',
+                          value: request['address']?.toString() ?? '-',
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 6),
-          // Attachments grid above vendor card
-          if (request['attachments'] != null &&
-              request['attachments'] is List &&
-              request['attachments'].isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 18.0),
+          const SizedBox(height: 16),
+          if (attachments.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 14,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Attachments',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  Row(
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          gradient: _kBrandGradient,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.attach_file_rounded,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Attachments',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          color: const Color(0xFF102A43),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -267,9 +313,9 @@ class _RequestDetailsPageState extends State<RequestDetailsPage> {
                           crossAxisSpacing: 8,
                           mainAxisSpacing: 8,
                         ),
-                    itemCount: request['attachments'].length,
+                    itemCount: attachments.length,
                     itemBuilder: (context, index) {
-                      final img = request['attachments'][index];
+                      final img = attachments[index].toString();
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
@@ -290,167 +336,150 @@ class _RequestDetailsPageState extends State<RequestDetailsPage> {
                 ],
               ),
             ),
-          Card(
-            color: Colors.white,
-            elevation: 2,
-            shape: RoundedRectangleBorder(
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 14,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.handyman, color: Colors.teal.shade700),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Assigned Vendor: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.teal.shade700,
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          gradient: _kBrandGradient,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.handyman_rounded,
+                          color: Colors.white,
+                          size: 16,
                         ),
                       ),
-                      Expanded(
-                        child: Text(
-                          request['vendor'] ?? '',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.teal,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                      const SizedBox(width: 8),
+                      Text(
+                        'Vendor Details',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          color: const Color(0xFF102A43),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  if (request['vendorCompany'] != null &&
-                      request['vendorCompany'].toString().isNotEmpty)
-                    Row(
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
                       children: [
-                        Icon(Icons.business, color: Colors.indigo.shade700),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Company: ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.indigo.shade700,
-                          ),
+                        _DetailRow(
+                          icon: Icons.person_outline,
+                          label: 'Vendor',
+                          value: vendorName.isEmpty ? 'Unassigned' : vendorName,
                         ),
-                        Expanded(
-                          child: Text(
-                            request['vendorCompany'],
-                            style: const TextStyle(fontSize: 16),
-                            overflow: TextOverflow.ellipsis,
+                        if (request['vendorCompany'] != null &&
+                            request['vendorCompany'].toString().isNotEmpty)
+                          _DetailRow(
+                            icon: Icons.business_outlined,
+                            label: 'Company',
+                            value: request['vendorCompany']?.toString() ?? '-',
                           ),
-                        ),
+                        if (request['vendorContact'] != null &&
+                            request['vendorContact'].toString().isNotEmpty)
+                          _DetailRow(
+                            icon: Icons.phone_outlined,
+                            label: 'Contact',
+                            value: request['vendorContact']?.toString() ?? '-',
+                          ),
+                        if (request['vendorEmail'] != null &&
+                            request['vendorEmail'].toString().isNotEmpty)
+                          _DetailRow(
+                            icon: Icons.email_outlined,
+                            label: 'Email',
+                            value: request['vendorEmail']?.toString() ?? '-',
+                          ),
                       ],
                     ),
-                  if (request['vendorContact'] != null &&
-                      request['vendorContact'].toString().isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(Icons.phone, color: Colors.green.shade700),
-                          const SizedBox(width: 10),
-                          Text(
-                            'Contact: ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.green.shade700,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Flexible(
-                            child: Text(
-                              request['vendorContact'],
-                              style: const TextStyle(fontSize: 16),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              softWrap: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  if (request['vendorEmail'] != null &&
-                      request['vendorEmail'].toString().isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(Icons.email, color: Colors.deepPurple.shade700),
-                          const SizedBox(width: 10),
-                          Text(
-                            'Email: ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.deepPurple.shade700,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Flexible(
-                            child: Text(
-                              request['vendorEmail'],
-                              style: const TextStyle(fontSize: 16),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              softWrap: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  ),
                   if (isNewRequest && !showVendorDropdown)
                     Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
+                      padding: const EdgeInsets.only(top: 16),
                       child: Center(
-                        child: ElevatedButton.icon(
-                          icon: const Icon(Icons.assignment_ind),
-                          label: const Text('Assign Vendor'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: _kBrandGradient,
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              showVendorDropdown = true;
-                            });
-                          },
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.assignment_ind),
+                            label: Text(
+                              'Assign Vendor',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                showVendorDropdown = true;
+                              });
+                            },
+                          ),
                         ),
                       ),
                     ),
                   if (isNewRequest && showVendorDropdown)
                     Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
+                      padding: const EdgeInsets.only(top: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Select Vendor:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                            maxLines: 2,
+                          Text(
+                            'Select Vendor',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF102A43),
+                            ),
                           ),
                           const SizedBox(height: 8),
                           DropdownButtonFormField<String>(
                             value: selectedVendor,
-                            hint: const Text('Select vendor'),
+                            hint: Text(
+                              'Choose a vendor',
+                              style: GoogleFonts.poppins(fontSize: 13),
+                            ),
                             items:
                                 vendors.map((vendor) {
                                   return DropdownMenuItem<String>(
                                     value: vendor['name'],
                                     child: Text(
-                                      '${vendor['company']}',
+                                      vendor['company'] ?? '',
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      softWrap: true,
+                                      style: GoogleFonts.poppins(fontSize: 13),
                                     ),
                                   );
                                 }).toList(),
@@ -459,68 +488,82 @@ class _RequestDetailsPageState extends State<RequestDetailsPage> {
                                 selectedVendor = value;
                               });
                             },
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFD6E2F5),
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFD6E2F5),
+                                ),
                               ),
                             ),
                           ),
                           const SizedBox(height: 12),
                           Center(
-                            child: ElevatedButton.icon(
-                              onPressed:
-                                  selectedVendor == null
-                                      ? null
-                                      : () {
-                                        final vendor = vendors.firstWhere(
-                                          (v) => v['name'] == selectedVendor,
-                                        );
-                                        setState(() {
-                                          widget.request['vendor'] =
-                                              vendor['name'];
-                                          widget.request['vendorCompany'] =
-                                              vendor['company'];
-                                          widget.request['vendorContact'] =
-                                              vendor['contact'];
-                                          widget.request['vendorEmail'] =
-                                              vendor['email'];
-                                          widget.request['status'] = 'Pending';
-                                          showVendorDropdown = false;
-                                        });
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Vendor assigned successfully!',
-                                            ),
-                                          ),
-                                        );
-                                      },
-                              icon: const Icon(
-                                Icons.check_circle_outline,
-                                color: Colors.white,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: _kBrandGradient,
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              label: const Text('Confirm Assignment'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(
-                                  0xFF4F8FFF,
-                                ), // Modern blue
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                              child: ElevatedButton.icon(
+                                onPressed:
+                                    selectedVendor == null
+                                        ? null
+                                        : () {
+                                          final vendor = vendors.firstWhere(
+                                            (v) => v['name'] == selectedVendor,
+                                          );
+                                          setState(() {
+                                            widget.request['vendor'] =
+                                                vendor['name'];
+                                            widget.request['vendorCompany'] =
+                                                vendor['company'];
+                                            widget.request['vendorContact'] =
+                                                vendor['contact'];
+                                            widget.request['vendorEmail'] =
+                                                vendor['email'];
+                                            widget.request['status'] =
+                                                'Pending';
+                                            showVendorDropdown = false;
+                                          });
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Vendor assigned successfully!',
+                                                style: GoogleFonts.poppins(),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                icon: const Icon(Icons.check_circle_outline),
+                                label: Text(
+                                  'Confirm Assignment',
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 28,
-                                  vertical: 16,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  foregroundColor: Colors.white,
+                                  disabledBackgroundColor: Colors.grey.shade300,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 14,
+                                  ),
                                 ),
-                                textStyle: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                                elevation: 3,
                               ),
                             ),
                           ),
@@ -528,6 +571,107 @@ class _RequestDetailsPageState extends State<RequestDetailsPage> {
                       ),
                     ),
                 ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickTag extends StatelessWidget {
+  final String text;
+
+  const _QuickTag({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF1FB),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: _kBrandSecondary.withOpacity(0.18)),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.poppins(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: _kBrandSecondary,
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _StatusChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.22)),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.poppins(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class _DetailRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _DetailRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 16, color: Colors.blueGrey[400]),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 92,
+            child: Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: _kBrandSecondary,
               ),
             ),
           ),

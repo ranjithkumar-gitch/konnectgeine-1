@@ -6,7 +6,10 @@ class AddVendorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add New Vendor')),
+      appBar: AppBar(
+        title: const Text('Add New Vendor'),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

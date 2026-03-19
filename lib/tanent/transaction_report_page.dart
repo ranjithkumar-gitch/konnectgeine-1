@@ -1,6 +1,5 @@
 import 'package:KonnectGenie/tanent/dashboard_screen.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 class TransactionReportPage extends StatelessWidget {
   final String transactionId;
@@ -16,7 +15,10 @@ class TransactionReportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Transaction Report')),
+      appBar: AppBar(
+        title: const Text('Transaction Report'),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
