@@ -208,7 +208,7 @@ class _ManagerRequestsPageState extends State<ManagerRequestsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Requests',
+                      'Service Requests',
                       style: GoogleFonts.poppins(
                         fontSize: 24,
                         color: Colors.white,

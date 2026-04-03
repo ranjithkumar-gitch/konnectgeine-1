@@ -21,11 +21,32 @@ class TenantDashboard extends StatefulWidget {
 
 class _TenantDashboardState extends State<TenantDashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  int _selectedIndex = 0;
+  int _selectedPageIndex = 0;
+
+  int get _bottomNavIndex {
+    switch (_selectedPageIndex) {
+      case 1:
+        return 1;
+      case 2:
+        return 2;
+      case 4:
+        return 3;
+      default:
+        return 0;
+    }
+  }
 
   void _onItemTapped(int index) {
+    final pageIndex =
+        index == 1
+            ? 1
+            : index == 2
+            ? 2
+            : index == 3
+            ? 4
+            : 0;
     setState(() {
-      _selectedIndex = index;
+      _selectedPageIndex = pageIndex;
     });
   }
 
@@ -227,41 +248,142 @@ class _TenantDashboardState extends State<TenantDashboard> {
           ],
         ),
         drawer: Drawer(
+          backgroundColor: const Color(0xFFF2F3F5),
           child: SafeArea(
+            top: false,
             child: Column(
               children: [
-                DrawerHeader(
-                  margin: EdgeInsets.zero,
-                  padding: const EdgeInsets.all(16),
+                // ── Logo header ──────────────────────────────────────────
+                Container(
+                  height: 150,
+                  padding: const EdgeInsets.fromLTRB(18, 32, 18, 16),
                   decoration: const BoxDecoration(gradient: _kBrandGradient),
                   child: Row(
                     children: [
-                      const CircleAvatar(
-                        radius: 28,
-                        backgroundImage: NetworkImage(
-                          'https://i.pravatar.cc/150?img=5',
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            'images/konnect_logo.png',
+                            height: 145,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                    ],
+                  ),
+                ),
+                // ── Menu items ───────────────────────────────────────────
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(12, 18, 12, 18),
+                    children: [
+                      _buildSidebarItem(
+                        icon: Icons.dashboard_customize_rounded,
+                        title: 'Dashboard',
+                        isActive: _selectedPageIndex == 0,
+                        onTap: () {
+                          Navigator.pop(context);
+                          setState(() => _selectedPageIndex = 0);
+                        },
+                      ),
+                      _buildSidebarItem(
+                        icon: Icons.home_rounded,
+                        title: 'My Property',
+                        isActive: _selectedPageIndex == 1,
+                        onTap: () {
+                          Navigator.pop(context);
+                          setState(() => _selectedPageIndex = 1);
+                        },
+                      ),
+                      _buildSidebarItem(
+                        icon: Icons.apartment_rounded,
+                        title: 'My Unit',
+                        isActive: _selectedPageIndex == 2,
+                        onTap: () {
+                          Navigator.pop(context);
+                          setState(() => _selectedPageIndex = 2);
+                        },
+                      ),
+                      _buildSidebarItem(
+                        icon: Icons.handyman_rounded,
+                        title: 'Service Requests',
+                        isActive: _selectedPageIndex == 4,
+                        onTap: () {
+                          Navigator.pop(context);
+                          setState(() => _selectedPageIndex = 4);
+                        },
+                      ),
+                      _buildSidebarItem(
+                        icon: Icons.account_circle_rounded,
+                        title: 'My Profile',
+                        isActive: false,
+                        onTap: () {
+                          Navigator.pop(context);
+                          _openProfilePage();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                // ── User footer ──────────────────────────────────────────
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF0F1A36),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(0),
+                      topRight: Radius.circular(0),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF325DA9),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: const Color(0xFF6D90D1),
+                            width: 3,
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          'MS',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Raj Kumar',
+                              'Michael Smith',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.poppins(
                                 color: Colors.white,
-                                fontSize: 18,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 2),
                             Text(
                               'Tenant',
                               style: GoogleFonts.poppins(
-                                color: Colors.white70,
-                                fontSize: 13,
+                                color: const Color(0xFFAAB3CC),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -270,75 +392,21 @@ class _TenantDashboardState extends State<TenantDashboard> {
                     ],
                   ),
                 ),
-                Expanded(
-                  child: ListView(
+                Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(color: Color(0xFF0F1A36)),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
+                  child: Column(
                     children: [
-                      _buildDrawerItem(
-                        icon: Icons.dashboard,
-                        title: 'Dashboard',
-                        onTap: () {
-                          Navigator.pop(context);
-                          setState(() {
-                            _selectedIndex = 0;
-                          });
-                        },
-                      ),
-                      _buildDrawerItem(
-                        icon: Icons.apartment,
-                        title: 'My Unit',
-                        onTap: () {
-                          Navigator.pop(context);
-                          setState(() {
-                            _selectedIndex = 1;
-                          });
-                        },
-                      ),
-                      _buildDrawerItem(
-                        icon: Icons.payments,
-                        title: 'Payments',
-                        onTap: () {
-                          Navigator.pop(context);
-                          setState(() {
-                            _selectedIndex = 2;
-                          });
-                        },
-                      ),
-                      _buildDrawerItem(
-                        icon: Icons.assignment,
-                        title: 'Requests',
-                        onTap: () {
-                          Navigator.pop(context);
-                          setState(() {
-                            _selectedIndex = 3;
-                          });
-                        },
-                      ),
-                      const Divider(),
-                      _buildDrawerItem(
-                        icon: Icons.person,
-                        title: 'My Profile',
-                        onTap: () {
-                          Navigator.pop(context);
-                          _openProfilePage();
-                        },
-                      ),
-                      _buildDrawerItem(
-                        icon: Icons.settings,
-                        title: 'Settings',
-                        onTap: () {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Settings clicked')),
-                          );
-                        },
-                      ),
-                      _buildDrawerItem(
-                        icon: Icons.logout,
-                        title: 'Logout',
-                        onTap: () {
-                          Navigator.pop(context);
-                          _logout();
-                        },
+                      const Divider(color: Color(0xFF263657), height: 1),
+                      const SizedBox(height: 10),
+                      Text(
+                        '© 2026 Konnect@Property',
+                        style: GoogleFonts.poppins(
+                          color: const Color(0xFF5F6E8D),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
@@ -370,7 +438,7 @@ class _TenantDashboardState extends State<TenantDashboard> {
                   type: BottomNavigationBarType.fixed,
                   backgroundColor: Colors.transparent,
                   elevation: 0,
-                  currentIndex: _selectedIndex,
+                  currentIndex: _bottomNavIndex,
                   onTap: _onItemTapped,
                   selectedItemColor: Colors.white,
                   unselectedItemColor: Colors.white70,
@@ -383,12 +451,12 @@ class _TenantDashboardState extends State<TenantDashboard> {
                       label: 'Dashboard',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.apartment),
-                      label: 'My Unit',
+                      icon: Icon(Icons.home_rounded),
+                      label: 'My Property',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.payments),
-                      label: 'Payments',
+                      icon: Icon(Icons.apartment),
+                      label: 'My Unit',
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.assignment),
@@ -405,29 +473,831 @@ class _TenantDashboardState extends State<TenantDashboard> {
   }
 
   Widget _buildPage() {
-    switch (_selectedIndex) {
+    switch (_selectedPageIndex) {
       case 0:
         return const _TenantDashboardPage();
       case 1:
-        return const _TenantMyUnitPage();
+        return const _TenantMyPropertyPage();
       case 2:
-        return const _TenantPaymentsPage();
+        return const _TenantMyUnitPage();
       case 3:
+        return const _TenantPaymentsPage();
+      case 4:
         return const _TenantRequestsPage();
       default:
         return const _TenantDashboardPage();
     }
   }
 
-  Widget _buildDrawerItem({
+  Widget _buildSidebarItem({
     required IconData icon,
     required String title,
     required VoidCallback onTap,
+    bool isActive = false,
   }) {
-    return ListTile(
-      leading: Icon(icon, color: _kBrandSecondary),
-      title: Text(title, style: GoogleFonts.poppins()),
+    final Color iconTileColor =
+        isActive ? Colors.white.withOpacity(0.2) : const Color(0xFFE4E6EC);
+    final Color textColor = isActive ? Colors.white : const Color(0xFF1F2937);
+    final Color iconColor = isActive ? Colors.white : const Color(0xFF6B7280);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: isActive ? const Color(0xFF2E5BA6) : Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: onTap,
+          child: Container(
+            height: 72,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: iconTileColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 24),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: GoogleFonts.poppins(
+                      color: textColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// My Property Page
+class _TenantMyPropertyPage extends StatefulWidget {
+  const _TenantMyPropertyPage();
+
+  @override
+  State<_TenantMyPropertyPage> createState() => _TenantMyPropertyPageState();
+}
+
+class _TenantMyPropertyPageState extends State<_TenantMyPropertyPage> {
+  String _search = '';
+  String _statusFilter = 'All Status';
+  String _typeFilter = 'All Types';
+
+  static const List<Map<String, String>> _properties = [
+    {
+      'id': 'U20262',
+      'name': 'The Heights',
+      'city': 'Cincinnati',
+      'type': 'Apartments/Condo',
+      'occupancy': '-',
+      'status': 'Active',
+    },
+  ];
+
+  List<Map<String, String>> get _filtered {
+    final query = _search.trim().toLowerCase();
+    return _properties.where((p) {
+      final haystack =
+          '${p['id']} ${p['name']} ${p['city']} ${p['type']}'.toLowerCase();
+      final matchesSearch = query.isEmpty || haystack.contains(query);
+      final matchesStatus =
+          _statusFilter == 'All Status' || p['status'] == _statusFilter;
+      final matchesType =
+          _typeFilter == 'All Types' || p['type'] == _typeFilter;
+      return matchesSearch && matchesStatus && matchesType;
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight),
+      children: [
+        const _PageHeaderBanner(
+          title: 'My Property',
+          subtitle: 'Search and view your assigned property details.',
+          icon: Icons.home_work_rounded,
+        ),
+        const SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: TextField(
+            onChanged: (value) => setState(() => _search = value),
+            decoration: InputDecoration(
+              hintText: 'Search by property name, city or ID',
+              hintStyle: GoogleFonts.poppins(fontSize: 13),
+              prefixIcon: const Icon(Icons.search_rounded),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Wrap(
+          spacing: 10,
+          runSpacing: 8,
+          children: [
+            _TenantFilterPill(
+              icon: Icons.layers_rounded,
+              label: 'All Status',
+              isActive: _statusFilter == 'All Status',
+              onTap: () => setState(() => _statusFilter = 'All Status'),
+            ),
+            _TenantFilterPill(
+              icon: Icons.check_circle_outline_rounded,
+              label: 'Active',
+              isActive: _statusFilter == 'Active',
+              onTap: () => setState(() => _statusFilter = 'Active'),
+            ),
+            _TenantFilterPill(
+              icon: Icons.home_work_outlined,
+              label: 'All Types',
+              isActive: _typeFilter == 'All Types',
+              onTap: () => setState(() => _typeFilter = 'All Types'),
+            ),
+            _TenantFilterPill(
+              icon: Icons.apartment_rounded,
+              label: 'Apartments/Condo',
+              isActive: _typeFilter == 'Apartments/Condo',
+              onTap: () => setState(() => _typeFilter = 'Apartments/Condo'),
+            ),
+            _TenantFilterPill(
+              icon: Icons.filter_alt_off_rounded,
+              label: 'Clear',
+              onTap: () {
+                setState(() {
+                  _search = '';
+                  _statusFilter = 'All Status';
+                  _typeFilter = 'All Types';
+                });
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 18),
+        if (_filtered.isEmpty)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Text(
+              'No properties match your search/filter.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: Colors.grey[700],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          )
+        else
+          ..._filtered.map(
+            (property) => _TenantPropertyItemCard(
+              property: property,
+              onView: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const _TenantPropertyDetailsPage(),
+                  ),
+                );
+              },
+            ),
+          ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+}
+
+class _TenantFilterPill extends StatelessWidget {
+  const _TenantFilterPill({
+    required this.icon,
+    required this.label,
+    this.isActive = false,
+    this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final fgColor = isActive ? Colors.white : _kBrandSecondary;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(24),
       onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+        decoration: BoxDecoration(
+          gradient: isActive ? _kBrandGradient : null,
+          color: isActive ? null : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isActive ? _kBrandSecondary : Colors.blueGrey.shade100,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: fgColor),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: fgColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TenantPropertyItemCard extends StatelessWidget {
+  const _TenantPropertyItemCard({required this.property, required this.onView});
+
+  final Map<String, String> property;
+  final VoidCallback onView;
+
+  @override
+  Widget build(BuildContext context) {
+    final statusLabel = property['status'] ?? 'Unknown';
+    final statusColor =
+        statusLabel.toLowerCase() == 'active' ? Colors.green : Colors.orange;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 14),
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFD9E2EC), Color(0xFFBCCCDC)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.apartment_rounded,
+                    color: Color(0xFF243B53),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        property['name'] ?? '-',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          _TenantPropertyQuickTag(
+                            text: 'ID ${property['id'] ?? '-'}',
+                          ),
+                          _TenantPropertyQuickTag(
+                            text: property['type'] ?? '-',
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  _TenantPropertyDetailRow(
+                    icon: Icons.location_on_outlined,
+                    label: 'City',
+                    value: property['city'] ?? '-',
+                  ),
+                  _TenantPropertyDetailRow(
+                    icon: Icons.people_outline_rounded,
+                    label: 'Occupancy',
+                    value: property['occupancy'] ?? '-',
+                  ),
+                  _TenantPropertyDetailRow(
+                    icon: Icons.home_work_outlined,
+                    label: 'Type',
+                    value: property['type'] ?? '-',
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                _TenantStatusChip(label: statusLabel, color: statusColor),
+                const Spacer(),
+                OutlinedButton.icon(
+                  onPressed: onView,
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.blueGrey.shade100),
+                    foregroundColor: const Color(0xFF243B53),
+                  ),
+                  icon: const Icon(Icons.visibility_outlined, size: 18),
+                  label: Text('View', style: GoogleFonts.poppins(fontSize: 12)),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TenantPropertyQuickTag extends StatelessWidget {
+  const _TenantPropertyQuickTag({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF1FB),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: _kBrandSecondary.withOpacity(0.18)),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.poppins(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: _kBrandSecondary,
+        ),
+      ),
+    );
+  }
+}
+
+class _TenantStatusChip extends StatelessWidget {
+  const _TenantStatusChip({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withOpacity(0.22)),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.poppins(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class _TenantPropertyDetailRow extends StatelessWidget {
+  const _TenantPropertyDetailRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: Colors.blueGrey[400]),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: _kBrandSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TenantPropertyDetailsPage extends StatelessWidget {
+  const _TenantPropertyDetailsPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: _kPageBackground,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: _kBrandGradient),
+        ),
+        title: Text(
+          'Property Details',
+          style: GoogleFonts.poppins(color: Colors.white),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const _PropertyDetailsSection(
+            title: 'Basic Property Information',
+            children: [
+              _PropertyFormReadOnlyField(label: 'Property ID', value: '20264'),
+              _PropertyFormReadOnlyField(
+                label: 'Type *',
+                value: 'Apartments/Condo',
+              ),
+              _PropertyFormReadOnlyField(
+                label: 'Property Name *',
+                value: 'The Heights',
+              ),
+              _PropertyFormReadOnlyField(
+                label: 'Country *',
+                value: 'United States',
+              ),
+              _PropertyFormReadOnlyField(label: 'State *', value: 'Ohio'),
+              _PropertyFormReadOnlyField(label: 'City *', value: 'Cincinnati'),
+              _PropertyFormReadOnlyField(
+                label: 'Address *',
+                value: '717 Martin Luther King Dr W',
+              ),
+              _PropertyFormReadOnlyField(label: 'ZIP Code *', value: '45220'),
+              _PropertyFormReadOnlyField(
+                label: 'Website',
+                value: 'https://www.theheightsbyalbion.com/',
+              ),
+              _PropertyFormReadOnlyField(label: 'Status *', value: 'Active'),
+              _PropertyFormReadOnlyField(label: 'Year Built', value: '2016'),
+            ],
+            fullWidthChild: _AmenitiesReadOnlyField(),
+          ),
+          const SizedBox(height: 18),
+          const _PropertyDetailsSection(
+            title: 'Contact Information',
+            children: [
+              _PropertyFormReadOnlyField(
+                label: 'Contact Person',
+                value: 'The Heights Sales Office',
+              ),
+              _PropertyFormReadOnlyField(
+                label: 'Contact Person Mobile',
+                value: '+1 5135551234',
+              ),
+              _PropertyFormReadOnlyField(
+                label: 'Contact Person Email',
+                value: 'sales@theheights.com',
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          const _PropertyDetailsSection(
+            title: 'Developer Information',
+            children: [
+              _PropertyFormReadOnlyField(
+                label: 'Developer Name',
+                value: 'The Heights Development LLC',
+              ),
+              _PropertyFormReadOnlyField(
+                label: 'Developer Email',
+                value: 'info@theheightsdev.com',
+              ),
+              _PropertyFormReadOnlyField(
+                label: 'Developer Mobile',
+                value: '+1 5135555678',
+              ),
+            ],
+            fullWidthChild: _PropertyFormReadOnlyField(
+              label: 'Description',
+              value: 'Premium mixed-use property with modern amenities.',
+              minLines: 4,
+            ),
+          ),
+          const SizedBox(height: 18),
+          const _PropertyDetailsSection(
+            title: 'Property Location',
+            children: [
+              _PropertyFormReadOnlyField(
+                label: 'Search Address',
+                value: '717 Martin Luther King Dr W',
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _LocationIconButton(icon: Icons.search_rounded),
+                    SizedBox(width: 8),
+                    _LocationIconButton(icon: Icons.layers_rounded),
+                  ],
+                ),
+              ),
+              _PropertyFormReadOnlyField(
+                label: 'Coordinates',
+                value: 'Lat: 39.1381772   Lng: -84.5233826',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PropertyDetailsSection extends StatelessWidget {
+  const _PropertyDetailsSection({
+    required this.title,
+    required this.children,
+    this.fullWidthChild,
+  });
+
+  final String title;
+  final List<Widget> children;
+  final Widget? fullWidthChild;
+
+  @override
+  Widget build(BuildContext context) {
+    return _SectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF1E293B),
+            ),
+          ),
+          const SizedBox(height: 14),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final spacing = 12.0;
+              final columns = constraints.maxWidth < 860 ? 1 : 3;
+              final itemWidth =
+                  (constraints.maxWidth - ((columns - 1) * spacing)) / columns;
+
+              return Wrap(
+                spacing: spacing,
+                runSpacing: 12,
+                children:
+                    children
+                        .map(
+                          (child) => SizedBox(width: itemWidth, child: child),
+                        )
+                        .toList(),
+              );
+            },
+          ),
+          if (fullWidthChild != null) ...[
+            const SizedBox(height: 12),
+            fullWidthChild!,
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PropertyFormReadOnlyField extends StatelessWidget {
+  const _PropertyFormReadOnlyField({
+    required this.label,
+    required this.value,
+    this.minLines = 1,
+    this.trailing,
+  });
+
+  final String label;
+  final String value;
+  final int minLines;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF374151),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFD8E0EA)),
+          ),
+          child: Row(
+            crossAxisAlignment:
+                minLines > 1
+                    ? CrossAxisAlignment.start
+                    : CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  value,
+                  maxLines: minLines > 1 ? minLines : 1,
+                  overflow:
+                      minLines > 1
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF4B5563),
+                  ),
+                ),
+              ),
+              if (trailing != null) ...[const SizedBox(width: 10), trailing!],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AmenitiesReadOnlyField extends StatelessWidget {
+  const _AmenitiesReadOnlyField();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Amenities',
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF374151),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFD8E0EA)),
+          ),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: const [
+              _AmenityPillTag('CCTV'),
+              _AmenityPillTag("Children's Play Area"),
+              _AmenityPillTag('Clubhouse'),
+              _AmenityPillTag('Community Hall'),
+              _AmenityPillTag('Concierge'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AmenityPillTag extends StatelessWidget {
+  const _AmenityPillTag(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        gradient: _kBrandGradient,
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.poppins(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _LocationIconButton extends StatelessWidget {
+  const _LocationIconButton({required this.icon});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 42,
+      height: 42,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color:
+            icon == Icons.layers_rounded
+                ? const Color(0xFFF59E0B)
+                : const Color(0xFF3B82F6),
+      ),
+      child: Icon(icon, color: Colors.white),
     );
   }
 }
@@ -436,219 +1306,447 @@ class _TenantDashboardState extends State<TenantDashboard> {
 class _TenantDashboardPage extends StatelessWidget {
   const _TenantDashboardPage();
 
-  Widget _sectionHeader(String title, IconData icon) {
-    return Row(
-      children: [
-        Container(
-          width: 34,
-          height: 34,
-          decoration: BoxDecoration(
-            gradient: _kBrandGradient,
-            borderRadius: BorderRadius.circular(10),
+  String _dateLabel() {
+    final now = DateTime.now();
+    const weekdayNames = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    final hour12 = now.hour % 12 == 0 ? 12 : now.hour % 12;
+    final minute = now.minute.toString().padLeft(2, '0');
+    final ampm = now.hour >= 12 ? 'PM' : 'AM';
+    return '${weekdayNames[now.weekday - 1]}, ${monthNames[now.month - 1]} ${now.day}, ${now.year} · $hour12:$minute $ampm';
+  }
+
+  Widget _summaryCard({
+    required String title,
+    required String value,
+    required String caption,
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBg,
+    required Color captionColor,
+    required Color captionBg,
+    bool compact = false,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(compact ? 14 : 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(compact ? 16 : 18),
+        border: Border.all(color: const Color(0xFFDCE4F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          child: Icon(icon, color: Colors.white, size: 18),
-        ),
-        const SizedBox(width: 10),
-        Text(
-          title,
-          style: GoogleFonts.poppins(fontSize: 21, fontWeight: FontWeight.bold),
-        ),
-      ],
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xFF8B9AB4),
+                    fontSize: compact ? 11.5 : 12.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ),
+              Container(
+                width: compact ? 38 : 44,
+                height: compact ? 38 : 44,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(compact ? 12 : 14),
+                ),
+                child: Icon(icon, color: iconColor, size: compact ? 18 : 20),
+              ),
+            ],
+          ),
+          SizedBox(height: compact ? 10 : 12),
+          Text(
+            value,
+            style: GoogleFonts.poppins(
+              color: const Color(0xFF1E293B),
+              fontSize: compact ? 28 : 34,
+              fontWeight: FontWeight.w700,
+              height: 0.9,
+            ),
+          ),
+          SizedBox(height: compact ? 8 : 10),
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: compact ? 10 : 12,
+              vertical: compact ? 5 : 6,
+            ),
+            decoration: BoxDecoration(
+              color: captionBg,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(
+              caption,
+              style: GoogleFonts.poppins(
+                color: captionColor,
+                fontSize: compact ? 11.5 : 12.5,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _requestStat(
+    String label,
+    String value,
+    Color color, {
+    bool compact = false,
+  }) {
+    return Container(
+      height: compact ? 78 : 92,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(compact ? 14 : 16),
+        border: Border.all(color: const Color(0xFFDCE4F0)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.poppins(
+              color: const Color(0xFF667892),
+              fontSize: compact ? 10.5 : 11,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          SizedBox(height: compact ? 4 : 6),
+          Text(
+            value,
+            style: GoogleFonts.poppins(
+              color: color,
+              fontSize: compact ? 24 : 28,
+              fontWeight: FontWeight.w700,
+              height: 0.9,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final isWide = MediaQuery.of(context).size.width > 600;
-    final isCompact = MediaQuery.of(context).size.width < 380;
+    final width = MediaQuery.of(context).size.width;
+    final isWide = width >= 1180;
+    final isMedium = width >= 720;
+    final isCompact = width < 420;
 
     return ListView(
       padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight),
       children: [
-        const SizedBox(height: 8),
-        const _PageHeaderBanner(
-          title: 'Tenant Dashboard',
-          subtitle:
-              'Track your unit, bills, and service requests in one premium view.',
-          icon: Icons.dashboard_customize_rounded,
-        ),
-        const SizedBox(height: 20),
-        _sectionHeader('Overview', Icons.analytics_outlined),
-        const SizedBox(height: 12),
-        _SectionCard(
-          child: GridView.count(
-            crossAxisCount: isWide ? 4 : 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            childAspectRatio:
-                isWide
-                    ? 2.2
-                    : isCompact
-                    ? 1.45
-                    : 1.75,
-            children: const [
-              _InfoCard(
-                title: 'Rent Dues',
-                count: 2,
-                icon: Icons.home_work,
-                color: Color(0xFF2C5AA0),
-              ),
-              _InfoCard(
-                title: 'Utility Bills Due',
-                count: 3,
-                icon: Icons.flash_on,
-                color: Color(0xFF0EA5A4),
-              ),
-              _InfoCard(
-                title: 'Open Requests',
-                count: 1,
-                icon: Icons.assignment,
-                color: Color(0xFFF59E0B),
-              ),
-              _InfoCard(
-                title: 'Saved Documents',
-                count: 5,
-                icon: Icons.description,
-                color: Color(0xFF6366F1),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 20),
-        _sectionHeader('Recent Issues', Icons.warning_outlined),
-        const SizedBox(height: 12),
-        _SectionCard(
+        Container(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF59E0B).withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.warning_rounded,
-                      color: Color(0xFFF59E0B),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Electricity Bill Pending',
+                          'Good afternoon, Michael! 👋',
                           style: GoogleFonts.poppins(
-                            fontSize: 14,
+                            color: const Color(0xFF0F172A),
+                            fontSize: isCompact ? 18 : 22,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Due on 25 Mar 2024',
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: const Color(0xFF697993),
-                          ),
+                        SizedBox(height: isCompact ? 6 : 8),
+                        Row(
+                          children: [
+                            Container(
+                              width: isCompact ? 8 : 10,
+                              height: isCompact ? 8 : 10,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF80D1B0),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Flexible(
+                              child: Text(
+                                'Your home dashboard · My Property, My Unit & service requests',
+                                style: GoogleFonts.poppins(
+                                  color: const Color(0xFF64748B),
+                                  fontSize: isCompact ? 11 : 12.5,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                  Text(
-                    '₹450',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFFF59E0B),
+                  if (isMedium)
+                    Container(
+                      margin: const EdgeInsets.only(left: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F4F9),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: const Color(0xFFDDE3ED)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_month_rounded,
+                            size: 18,
+                            color: Color(0xFF4B5563),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            _dateLabel(),
+                            style: GoogleFonts.poppins(
+                              color: const Color(0xFF4B5563),
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _kBrandSecondary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 18),
+        GridView.count(
+          crossAxisCount: isWide ? 4 : (isMedium ? 2 : 1),
+          crossAxisSpacing: 14,
+          mainAxisSpacing: 14,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          childAspectRatio: isWide ? 1.9 : (isMedium ? 1.35 : 1.65),
+          children: [
+            _summaryCard(
+              title: 'MY PROPERTY',
+              value: '1',
+              caption: 'Linked properties',
+              icon: Icons.home_rounded,
+              iconColor: const Color(0xFF2A58C3),
+              iconBg: const Color(0xFFDCE6F9),
+              captionColor: const Color(0xFF2A58C3),
+              captionBg: const Color(0xFFDCE6F9),
+              compact: !isMedium,
+            ),
+            _summaryCard(
+              title: 'MY UNIT',
+              value: '1',
+              caption: 'Your unit(s)',
+              icon: Icons.cottage_rounded,
+              iconColor: const Color(0xFF0F7B59),
+              iconBg: const Color(0xFFDDF3EA),
+              captionColor: const Color(0xFF0F7B59),
+              captionBg: const Color(0xFFDDF3EA),
+              compact: !isMedium,
+            ),
+            _summaryCard(
+              title: 'ALL REQUESTS',
+              value: '0',
+              caption: 'Total SR',
+              icon: Icons.assignment_rounded,
+              iconColor: const Color(0xFFA95A0A),
+              iconBg: const Color(0xFFF9EBDB),
+              captionColor: const Color(0xFFA95A0A),
+              captionBg: const Color(0xFFF9EBDB),
+              compact: !isMedium,
+            ),
+            _summaryCard(
+              title: 'NEEDS ATTENTION',
+              value: '0',
+              caption: 'New + in progress',
+              icon: Icons.notifications_rounded,
+              iconColor: const Color(0xFF0A7C88),
+              iconBg: const Color(0xFFDDF1F4),
+              captionColor: const Color(0xFF5C2DCB),
+              captionBg: const Color(0xFFE9DFFD),
+              compact: !isMedium,
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        _serviceRequestsPanel(compact: !isMedium),
+      ],
+    );
+  }
+
+  Widget _serviceRequestsPanel({required bool compact}) {
+    return Container(
+      padding: const EdgeInsets.all(0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(compact ? 16 : 20),
+        border: Border.all(color: const Color(0xFFDCE4F0)),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFA95A0A),
+                    shape: BoxShape.circle,
                   ),
-                  onPressed: () {},
+                ),
+                const SizedBox(width: 10),
+                Expanded(
                   child: Text(
-                    'Pay Now',
+                    'Service requests',
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF1F2937),
+                      fontSize: compact ? 15 : 17,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-              ),
-            ],
+                Text(
+                  'View all ->',
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xFF2A58C3),
+                    fontSize: compact ? 12 : 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 20),
-        _sectionHeader('Quick Actions', Icons.bolt_rounded),
-        const SizedBox(height: 12),
-        _SectionCard(
-          child: GridView.count(
-            crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            childAspectRatio: 2.5,
-            children: [
-              _ActionButton(
-                icon: Icons.payments_rounded,
-                label: 'Pay Rent',
-                onTap:
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const _PayRentQuickPage(),
+          const Divider(height: 1, color: Color(0xFFDCE4F0)),
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = compact || constraints.maxWidth < 760;
+                if (isNarrow) {
+                  final tileWidth = (constraints.maxWidth - 10) / 2;
+                  return Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      SizedBox(
+                        width: tileWidth,
+                        child: _requestStat(
+                          'NEW',
+                          '0',
+                          const Color(0xFF2A58C3),
+                          compact: true,
+                        ),
+                      ),
+                      SizedBox(
+                        width: tileWidth,
+                        child: _requestStat(
+                          'IN PROGRESS',
+                          '0',
+                          const Color(0xFFA95A0A),
+                          compact: true,
+                        ),
+                      ),
+                      SizedBox(
+                        width: tileWidth,
+                        child: _requestStat(
+                          'CLOSED',
+                          '0',
+                          const Color(0xFF0F7B59),
+                          compact: true,
+                        ),
+                      ),
+                      SizedBox(
+                        width: tileWidth,
+                        child: _requestStat(
+                          'REJECTED',
+                          '0',
+                          const Color(0xFFDC2626),
+                          compact: true,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                return Row(
+                  children: [
+                    Expanded(
+                      child: _requestStat('NEW', '0', const Color(0xFF2A58C3)),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _requestStat(
+                        'IN PROGRESS',
+                        '0',
+                        const Color(0xFFA95A0A),
                       ),
                     ),
-              ),
-              _ActionButton(
-                icon: Icons.assignment_rounded,
-                label: 'Raise Request',
-                onTap:
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const _RaiseRequestQuickPage(),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _requestStat(
+                        'CLOSED',
+                        '0',
+                        const Color(0xFF0F7B59),
                       ),
                     ),
-              ),
-              _ActionButton(
-                icon: Icons.document_scanner_rounded,
-                label: 'Documents',
-                onTap:
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const _DocumentsQuickPage(),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _requestStat(
+                        'REJECTED',
+                        '0',
+                        const Color(0xFFDC2626),
                       ),
                     ),
-              ),
-              _ActionButton(
-                icon: Icons.support_agent_rounded,
-                label: 'Support',
-                onTap:
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const _SupportQuickPage(),
-                      ),
-                    ),
-              ),
-            ],
+                  ],
+                );
+              },
+            ),
           ),
-        ),
-      ],
+          SizedBox(height: compact ? 12 : 24),
+        ],
+      ),
     );
   }
 }
@@ -1587,53 +2685,108 @@ class _TenantProfilePage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const _PageHeaderBanner(
-            title: 'My Profile',
-            subtitle: 'Manage your tenant information and emergency contacts.',
-            icon: Icons.person_rounded,
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: _kBrandGradient,
+              boxShadow: [
+                BoxShadow(
+                  color: _kBrandSecondary.withOpacity(0.22),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'My Profile',
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Review your account and residency details',
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          height: 1.3,
+                          color: Colors.white.withOpacity(0.82),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.account_circle_rounded,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 20),
-          _SectionCard(
-            child: Center(
-              child: Column(
-                children: [
-                  const CircleAvatar(
-                    radius: 50,
-                    backgroundImage: NetworkImage(
-                      'https://i.pravatar.cc/150?img=5',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Raj Kumar',
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    'Tenant',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: const Color(0xFF697993),
-                    ),
-                  ),
-                ],
+          const SizedBox(height: 16),
+          const _TenantProfileSectionCard(
+            title: 'Basic User Information',
+            children: [
+              _TenantProfileReadOnlyField(
+                label: 'Tenant Name',
+                value: 'Michael Smith',
               ),
-            ),
+              _TenantProfileReadOnlyField(
+                label: 'Email',
+                value: 'michael.smith@konnectproperty.com',
+              ),
+              _TenantProfileReadOnlyField(
+                label: 'Phone Number',
+                value: '+91 98765 43210',
+              ),
+              _TenantProfileReadOnlyField(label: 'Status', value: 'Active'),
+            ],
           ),
-          const SizedBox(height: 20),
-          Text(
-            'Personal Information',
-            style: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
+          const SizedBox(height: 16),
+          const _TenantProfileSectionCard(
+            title: 'Unit Information',
+            children: [
+              _TenantProfileReadOnlyField(
+                label: 'Property Name',
+                value: 'Green Valley Apartments',
+              ),
+              _TenantProfileReadOnlyField(label: 'Unit ID', value: 'UNIT-204'),
+              _TenantProfileReadOnlyField(label: 'Unit Type', value: '2BHK'),
+              _TenantProfileReadOnlyField(
+                label: 'Lease Period',
+                value: 'Jan 2026 - Dec 2026',
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          _ProfileField(label: 'Email', value: 'raj.kumar@email.com'),
-          _ProfileField(label: 'Phone', value: '+91 98765 43210'),
-          _ProfileField(label: 'Emergency Contact', value: '+91 99876 54321'),
+          const SizedBox(height: 16),
+          const _TenantProfileSectionCard(
+            title: 'Address Information',
+            children: [
+              _TenantProfileReadOnlyField(label: 'Country', value: 'India'),
+              _TenantProfileReadOnlyField(label: 'State', value: 'Telangana'),
+              _TenantProfileReadOnlyField(label: 'City', value: 'Hyderabad'),
+              _TenantProfileReadOnlyField(
+                label: 'ZIP/Postal Code',
+                value: '500081',
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -2197,44 +3350,117 @@ class _SupportTile extends StatelessWidget {
   }
 }
 
-class _ProfileField extends StatelessWidget {
-  const _ProfileField({required this.label, required this.value});
+class _TenantProfileSectionCard extends StatelessWidget {
+  const _TenantProfileSectionCard({
+    required this.title,
+    required this.children,
+  });
+
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: const BoxDecoration(
+              color: Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            child: Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1F2937),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isMobile = constraints.maxWidth < 720;
+                final spacing = 12.0;
+                final columns = isMobile ? 1 : 2;
+                final itemWidth =
+                    (constraints.maxWidth - ((columns - 1) * spacing)) /
+                    columns;
+
+                return Wrap(
+                  spacing: spacing,
+                  runSpacing: 14,
+                  children:
+                      children
+                          .map(
+                            (child) => SizedBox(width: itemWidth, child: child),
+                          )
+                          .toList(),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TenantProfileReadOnlyField extends StatelessWidget {
+  const _TenantProfileReadOnlyField({required this.label, required this.value});
 
   final String label;
   final String value;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFF),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _kCardBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              color: const Color(0xFF697993),
-              fontWeight: FontWeight.w500,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF374151),
           ),
-          const SizedBox(height: 6),
-          Text(
+        ),
+        const SizedBox(height: 6),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFD9E2EC)),
+          ),
+          child: Text(
             value,
             style: GoogleFonts.poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: _kBrandSecondary,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF334E68),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

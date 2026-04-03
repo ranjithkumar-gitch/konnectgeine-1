@@ -163,50 +163,13 @@ class _VendorDashboardState extends State<VendorDashboard> {
       return const _StaffListPage();
     } else if (_selectedIndex == 3) {
       return const _ServiceRequestsPage();
+    } else if (_selectedIndex == 4) {
+      return const _VendorProfilePage();
+    } else if (_selectedIndex == 5) {
+      return const _VendorReportsPage();
     }
 
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 520),
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: _kCard,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xFFE4E9F2)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                _navItems[_selectedIndex].icon,
-                size: 42,
-                color: _kBrandBlue,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                _navItems[_selectedIndex].label,
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: _kBrandNavy,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'This module is ready for API integration.',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  color: const Color(0xFF5F6C85),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    return const SizedBox.shrink();
   }
 
   @override
@@ -237,7 +200,6 @@ class _VendorDashboardState extends State<VendorDashboard> {
                       selectedIndex: _selectedIndex,
                       onSelect:
                           (index) => setState(() => _selectedIndex = index),
-                      onLogout: _logout,
                     ),
                     Expanded(
                       child: Column(
@@ -264,7 +226,6 @@ class _VendorDashboardState extends State<VendorDashboard> {
                   setState(() => _selectedIndex = index);
                   Navigator.of(context).pop();
                 },
-                onLogout: _logout,
                 inDrawer: true,
               ),
             ),
@@ -295,22 +256,6 @@ class _VendorDashboardState extends State<VendorDashboard> {
                 ),
               ),
               actions: [
-                IconButton(
-                  onPressed: () {},
-                  icon: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      gradient: _kBrandGradient,
-                      border: Border.all(color: Colors.white24),
-                    ),
-                    child: const Icon(
-                      Icons.notifications_none_rounded,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
                 IconButton(
                   onPressed: _logout,
                   icon: Container(
@@ -504,14 +449,12 @@ class _VendorSidebar extends StatelessWidget {
     required this.items,
     required this.selectedIndex,
     required this.onSelect,
-    required this.onLogout,
     this.inDrawer = false,
   });
 
   final List<_NavItem> items;
   final int selectedIndex;
   final ValueChanged<int> onSelect;
-  final VoidCallback onLogout;
   final bool inDrawer;
 
   @override
@@ -519,52 +462,32 @@ class _VendorSidebar extends StatelessWidget {
     return Container(
       width: inDrawer ? double.infinity : 280,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFF2F3F5),
         border: Border(
           right: BorderSide(
-            color: const Color(0xFFE5EAF3),
+            color: const Color(0xFFDDE5F2),
             width: inDrawer ? 0 : 1,
           ),
         ),
       ),
       child: SafeArea(
+        top: false,
         child: Column(
           children: [
-            DrawerHeader(
-              margin: EdgeInsets.zero,
-              padding: const EdgeInsets.all(16),
+            Container(
+              height: 150,
+              padding: const EdgeInsets.fromLTRB(18, 32, 18, 16),
               decoration: const BoxDecoration(gradient: _kBrandGradient),
               child: Row(
                 children: [
-                  const CircleAvatar(
-                    radius: 28,
-                    backgroundImage: NetworkImage(
-                      'https://i.pravatar.cc/150?img=28',
-                    ),
-                  ),
-                  const SizedBox(width: 12),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Gupta Sharma',
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Vendor Admin',
-                          style: GoogleFonts.poppins(
-                            color: Colors.white70,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        'images/konnect_logo.png',
+                        height: 128,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ],
@@ -572,7 +495,7 @@ class _VendorSidebar extends StatelessWidget {
             ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.fromLTRB(12, 18, 12, 18),
                 children: [
                   for (int index = 0; index < items.length; index++)
                     _menuTile(
@@ -581,28 +504,99 @@ class _VendorSidebar extends StatelessWidget {
                       selected: selectedIndex == index,
                       onTap: () => onSelect(index),
                     ),
-                  const Divider(height: 24),
-                  _menuTile(
-                    icon: Icons.logout_rounded,
-                    label: 'Logout',
-                    selected: false,
-                    onTap: onLogout,
-                  ),
                 ],
               ),
             ),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-              child: Text(
-                '© 2026 Konnect@Property',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  color: const Color(0xFF8EA0BE),
-                  fontSize: 12,
-                ),
+              padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
+              decoration: const BoxDecoration(color: Color(0xFF0F1A36)),
+              child: Row(
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF325DA9),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFF6D90D1),
+                        width: 3,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'GS',
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Gupta Sharma',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Vendor Admin',
+                          style: GoogleFonts.poppins(
+                            color: const Color(0xFFAAB3CC),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
+            if (inDrawer) ...[
+              Container(
+                height: 1,
+                margin: const EdgeInsets.symmetric(horizontal: 18),
+                color: const Color(0xFF223157),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                color: const Color(0xFF0F1A36),
+                padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
+                child: TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFFAAB3CC),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                      vertical: 4,
+                    ),
+                    alignment: Alignment.centerLeft,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).maybePop();
+                  },
+                  icon: const Icon(Icons.close_rounded, size: 18),
+                  label: Text(
+                    'Close Menu',
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -615,20 +609,48 @@ class _VendorSidebar extends StatelessWidget {
     required bool selected,
     required VoidCallback onTap,
   }) {
+    final Color iconTileColor =
+        selected ? Colors.white.withOpacity(0.2) : const Color(0xFFE4E6EC);
+    final Color textColor = selected ? Colors.white : const Color(0xFF1F2937);
+    final Color iconColor = selected ? Colors.white : const Color(0xFF6B7280);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-      child: ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        tileColor: selected ? const Color(0xFFF0F4FF) : null,
-        leading: Icon(icon, color: _kBrandNavy),
-        title: Text(
-          label,
-          style: GoogleFonts.poppins(
-            color: _kBrandNavy,
-            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: selected ? const Color(0xFF2E5BA6) : Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: onTap,
+          child: Container(
+            height: 72,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: iconTileColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 24),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: GoogleFonts.poppins(
+                      color: textColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        onTap: onTap,
       ),
     );
   }
@@ -2066,6 +2088,592 @@ class _NavItem {
 
   final IconData icon;
   final String label;
+}
+
+class _VendorProfilePage extends StatelessWidget {
+  const _VendorProfilePage();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: _kBrandGradient,
+            boxShadow: [
+              BoxShadow(
+                color: _kBrandNavy.withOpacity(0.22),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'My Profile',
+                      style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Review your account and business details',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        height: 1.3,
+                        color: Colors.white.withOpacity(0.82),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.account_circle_rounded,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        const _VendorProfileSectionCard(
+          title: 'Basic User Information',
+          children: [
+            _VendorProfileReadOnlyField(
+              label: 'Vendor Name',
+              value: 'Gupta Sharma',
+            ),
+            _VendorProfileReadOnlyField(
+              label: 'Email',
+              value: 'gupta.sharma@vendor.in',
+            ),
+            _VendorProfileReadOnlyField(
+              label: 'Phone Number',
+              value: '9876543210',
+            ),
+            _VendorProfileReadOnlyField(label: 'Status', value: 'Active'),
+          ],
+        ),
+        const SizedBox(height: 16),
+        const _VendorProfileSectionCard(
+          title: 'Company Information',
+          children: [
+            _VendorProfileReadOnlyField(
+              label: 'Company Name',
+              value: 'Hyderabad Facility Care Pvt Ltd',
+            ),
+            _VendorProfileReadOnlyField(label: 'Vendor ID', value: '2026008'),
+            _VendorProfileReadOnlyField(
+              label: 'Service Category',
+              value: 'Maintenance & Repair',
+            ),
+            _VendorProfileReadOnlyField(
+              label: 'Website',
+              value: 'www.vendorcare.in',
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        const _VendorProfileSectionCard(
+          title: 'Address Information',
+          children: [
+            _VendorProfileReadOnlyField(label: 'Country', value: 'India'),
+            _VendorProfileReadOnlyField(label: 'State', value: 'Telangana'),
+            _VendorProfileReadOnlyField(label: 'City', value: 'Hyderabad'),
+            _VendorProfileReadOnlyField(
+              label: 'ZIP/Postal Code',
+              value: '500081',
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _VendorProfileSectionCard extends StatelessWidget {
+  const _VendorProfileSectionCard({
+    required this.title,
+    required this.children,
+  });
+
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: const BoxDecoration(
+              color: Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            child: Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1F2937),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isMobile = constraints.maxWidth < 720;
+                final spacing = 12.0;
+                final columns = isMobile ? 1 : 2;
+                final itemWidth =
+                    (constraints.maxWidth - ((columns - 1) * spacing)) /
+                    columns;
+
+                return Wrap(
+                  spacing: spacing,
+                  runSpacing: 14,
+                  children:
+                      children
+                          .map(
+                            (child) => SizedBox(width: itemWidth, child: child),
+                          )
+                          .toList(),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _VendorProfileReadOnlyField extends StatelessWidget {
+  const _VendorProfileReadOnlyField({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF374151),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFD9E2EC)),
+          ),
+          child: Text(
+            value,
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF334E68),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _VendorReportsPage extends StatefulWidget {
+  const _VendorReportsPage();
+
+  @override
+  State<_VendorReportsPage> createState() => _VendorReportsPageState();
+}
+
+class _VendorReportsPageState extends State<_VendorReportsPage> {
+  String _searchText = '';
+  String _selectedFilter = 'All';
+
+  final List<Map<String, String>> _reports = const [
+    {
+      'name': 'Service Requests Summary',
+      'type': 'Service Request',
+      'date': 'Mar 21, 2026',
+      'size': '1.8 MB',
+      'status': 'Ready',
+    },
+    {
+      'name': 'Vendor Performance Report',
+      'type': 'Analytics',
+      'date': 'Mar 19, 2026',
+      'size': '2.1 MB',
+      'status': 'Ready',
+    },
+    {
+      'name': 'Monthly Settlement Sheet',
+      'type': 'Billing',
+      'date': 'Mar 18, 2026',
+      'size': '950 KB',
+      'status': 'Processing',
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final filters = const [
+      'All',
+      'Ready',
+      'Processing',
+      'Service Request',
+      'Analytics',
+      'Billing',
+    ];
+
+    final filtered =
+        _reports.where((report) {
+          final q = _searchText.trim().toLowerCase();
+          final matchesSearch =
+              q.isEmpty ||
+              report['name']!.toLowerCase().contains(q) ||
+              report['type']!.toLowerCase().contains(q) ||
+              report['status']!.toLowerCase().contains(q);
+          final matchesFilter =
+              _selectedFilter == 'All' ||
+              report['type'] == _selectedFilter ||
+              report['status'] == _selectedFilter;
+          return matchesSearch && matchesFilter;
+        }).toList();
+
+    return ListView(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: _kBrandGradient,
+            boxShadow: [
+              BoxShadow(
+                color: _kBrandNavy.withOpacity(0.22),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Reports',
+                      style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'View and download vendor reports',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        height: 1.3,
+                        color: Colors.white.withOpacity(0.82),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.summarize_rounded, color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: TextField(
+            onChanged: (value) => setState(() => _searchText = value),
+            decoration: InputDecoration(
+              hintText: 'Search by report name, type, or status',
+              hintStyle: GoogleFonts.poppins(fontSize: 13),
+              prefixIcon: const Icon(Icons.search_rounded),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children:
+              filters
+                  .map(
+                    (filter) => _FilterChipWidget(
+                      icon:
+                          filter == 'All'
+                              ? Icons.layers_rounded
+                              : Icons.tune_rounded,
+                      label: filter,
+                      isActive: _selectedFilter == filter,
+                      onTap: () => setState(() => _selectedFilter = filter),
+                    ),
+                  )
+                  .toList(),
+        ),
+        const SizedBox(height: 18),
+        if (filtered.isEmpty)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Text(
+              'No reports match your search/filter.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: Colors.grey[700],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          )
+        else
+          ...filtered.map((report) => _VendorReportItemCard(report: report)),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+}
+
+class _VendorReportItemCard extends StatelessWidget {
+  const _VendorReportItemCard({required this.report});
+
+  final Map<String, String> report;
+
+  @override
+  Widget build(BuildContext context) {
+    final status = report['status'] ?? 'Ready';
+    final statusColor =
+        status == 'Processing'
+            ? const Color(0xFF3498DB)
+            : const Color(0xFF26B377);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 14),
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFD9E2EC), Color(0xFFBCCCDC)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.summarize_rounded,
+                    color: Color(0xFF243B53),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        report['name'] ?? '-',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF102A43),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          _VendorTag(text: report['type'] ?? '-'),
+                          _VendorTag(text: report['size'] ?? '-'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  _InfoRow(
+                    icon: Icons.schedule_rounded,
+                    label: 'Generated On',
+                    value: report['date'] ?? '-',
+                  ),
+                  const SizedBox(height: 8),
+                  _InfoRow(
+                    icon: Icons.verified_rounded,
+                    label: 'Status',
+                    value: report['status'] ?? '-',
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: statusColor.withOpacity(0.22)),
+                  ),
+                  child: Text(
+                    status,
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: statusColor,
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                OutlinedButton.icon(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.blueGrey.shade100),
+                    foregroundColor: _kBrandNavy,
+                  ),
+                  icon: const Icon(Icons.visibility_outlined, size: 18),
+                  label: Text('View', style: GoogleFonts.poppins(fontSize: 12)),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _VendorTag extends StatelessWidget {
+  const _VendorTag({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF1FB),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: _kBrandBlue.withOpacity(0.18)),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.poppins(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: _kBrandNavy,
+        ),
+      ),
+    );
+  }
 }
 
 class _PropertyManagersPage extends StatefulWidget {

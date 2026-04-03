@@ -11,7 +11,7 @@ import 'package:KonnectGenie/owner/owner_dashboard.dart';
 
 import 'package:KonnectGenie/repositories/auth_repository.dart';
 import 'package:KonnectGenie/superadmin/superAdminDashboard.dart';
-import 'package:KonnectGenie/tanent/dashboard_screen.dart';
+import 'package:KonnectGenie/tanent/tenant_dashboard.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final AuthRepository _repository = AuthRepository();
@@ -55,7 +55,7 @@ class LoginViewModel extends ChangeNotifier {
             );
           } else if (roleKey == "tenant") {
             navigatorKey.currentState?.pushReplacement(
-              MaterialPageRoute(builder: (_) => const DashboardScreen()),
+              MaterialPageRoute(builder: (_) => const TenantDashboard()),
             );
           } else if (roleKey == "kgpmgr") {
             navigatorKey.currentState?.pushReplacement(
